@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "25364483482",
+    "project_id": "lgu-circle",
+    "storage_bucket": "lgu-circle.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25364483482:android:ffc20d673daf33eacffe23",
+        "android_client_info": {
+          "package_name": "com.codesses.lgucircle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "25364483482-ivego0ubkt0ovhpcj8ca9osub55huqgu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyxsx9mUDkCFueOpK1sz2ZI_LntcYyGHs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "25364483482-ivego0ubkt0ovhpcj8ca9osub55huqgu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

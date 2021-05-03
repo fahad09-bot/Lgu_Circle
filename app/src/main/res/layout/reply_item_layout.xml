@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:background="@color/white">
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/profile_image"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_margin="@dimen/_5sdp"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="?selectableItemBackground"
+            android:text="Fahad"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/profile_image"
+            app:layout_constraintTop_toTopOf="@+id/profile_image"
+            android:layout_marginLeft="@dimen/_5sdp" />
+
+
+        <TextView
+            android:id="@+id/reply_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="@dimen/_170sdp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingEnd="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:text="Fahad"
+            android:textColor="@color/Light_grey"
+            android:textIsSelectable="true"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintStart_toStartOf="@id/username"
+            app:layout_constraintTop_toBottomOf="@id/username" />
+
+        <TextView
+            android:id="@+id/reply_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thur 15 Mar 21"
+            android:textColor="@color/Green"
+            android:textSize="@dimen/_8ssp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/reply_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/username" />
+
+        <TextView
+            android:id="@+id/reply_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:text="11:12 pm"
+            android:textColor="@color/Green"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintEnd_toEndOf="@id/reply_date"
+            app:layout_constraintTop_toBottomOf="@+id/reply_date" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

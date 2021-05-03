@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbarThumbVertical="@null"
+    tools:context=".user.EditProfileActivity">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/Green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/_15sdp">
+
+
+            <EditText
+                android:id="@+id/e_fname"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_margin="@dimen/_10sdp"
+                android:hint="@string/f_name"
+                android:padding="@dimen/_5sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/e_lname"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_margin="@dimen/_10sdp"
+                android:hint="@string/l_name"
+                android:padding="@dimen/_5sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/e_fname" />
+
+
+            <TextView
+                android:id="@+id/e_email"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_margin="@dimen/_10sdp"
+                android:drawablePadding="@dimen/_5sdp"
+                android:gravity="center_vertical"
+                android:hint="@string/email"
+                android:padding="@dimen/_5sdp"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintTop_toBottomOf="@id/e_lname" />
+
+
+            <com.hbb20.CountryCodePicker
+                android:id="@+id/sp_country_code"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/_10sdp"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                app:ccpDialog_showCloseIcon="true"
+                app:ccp_defaultNameCode="PK"
+                app:layout_constraintBottom_toBottomOf="@id/e_phone_no"
+                app:layout_constraintEnd_toStartOf="@id/e_phone_no"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/e_email"
+                app:layout_constraintTop_toTopOf="@id/e_phone_no" />
+
+            <EditText
+                android:id="@+id/e_phone_no"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_margin="@dimen/_10sdp"
+                android:hint="@string/phone_no"
+                android:inputType="phone"
+                android:padding="@dimen/_5sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/sp_country_code"
+                app:layout_constraintTop_toBottomOf="@id/e_email" />
+
+            <FrameLayout
+                android:id="@+id/your_sports_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                app:layout_constraintTop_toBottomOf="@id/e_phone_no">
+
+
+            </FrameLayout>
+
+
+            <Button
+                android:id="@+id/update_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_50sdp"
+                android:backgroundTint="@color/Green"
+                android:minWidth="@dimen/_90sdp"
+                android:minHeight="?attr/actionBarSize"
+                android:text="@string/update"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/your_sports_layout" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

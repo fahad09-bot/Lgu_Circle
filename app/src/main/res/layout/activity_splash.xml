@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SplashActivity.SplashActivity">
+<TextView
+    android:id="@+id/lgu_circle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:text="LGU Circle"
+    android:gravity="center"
+    android:textSize="@dimen/_40sdp"
+    android:textStyle="italic"
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+    android:textColor="@color/Green"
+    ></TextView>
+</androidx.constraintlayout.widget.ConstraintLayout>

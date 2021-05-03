@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.YourprofileActivity">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:backgroundTint="@color/Green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/back_press"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:src="@drawable/ic_baseline_account_box_24"
+                app:tint="@color/black"
+                android:layout_marginLeft="@dimen/_10sdp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_toRightOf="@+id/back_press"
+                android:text="@string/your_profile"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16ssp"
+                android:layout_marginLeft="@dimen/_10sdp" />
+
+            <TextView
+                android:id="@+id/edit_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:padding="@dimen/_3sdp"
+                android:text="@string/edit_profile"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14ssp"
+                android:visibility="gone"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/_10sdp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/profile_img"
+        android:layout_width="@dimen/_90sdp"
+        android:layout_height="@dimen/_90sdp"
+        android:layout_marginTop="@dimen/_25sdp"
+        android:elevation="@dimen/_3sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/action_bar"
+        app:riv_border_color="@color/dim_green"
+        app:riv_border_width="@dimen/_2sdp"
+        app:riv_corner_radius="@dimen/_3sdp"
+        android:src="@drawable/profile_icon"
+        />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_5sdp"
+        android:textColor="@color/red"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/profile_img"
+        app:layout_constraintStart_toStartOf="@id/profile_img"
+        app:layout_constraintTop_toBottomOf="@id/profile_img" />
+
+    <TextView
+        android:id="@+id/game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_5sdp"
+        android:textColor="@color/red"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/name"
+        app:layout_constraintStart_toStartOf="@id/name"
+        app:layout_constraintTop_toBottomOf="@id/name" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/_5sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/game" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
