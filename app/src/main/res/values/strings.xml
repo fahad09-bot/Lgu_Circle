@@ -31,6 +31,8 @@
     <string name="pass_must_match">Password Must Match</string>
     <string name="your_profile">Your Profile</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="services">Services</string>
+    <string name="which_service">Which service you provide or looking for</string>
     <string name="change_pass">Change Password</string>
     <string name="feed_back">Feed Back</string>
     <string name="contact_us">Contact Us</string>
@@ -46,7 +48,9 @@
     <string name="edit">Edit</string>
     <string name="intent_open_full_screen_image">Open Image</string>
     <string name="intent_post_user_id">User post ID</string>
+
     <style name="HeadingText">heading Text</style>
+
     <string name="reply_lowercase">Reply in Lowercase</string>
     <string name="post_id">Post Id</string>
     <string name="today">Today</string>
@@ -54,4 +58,15 @@
     <string name="bottom_menu">Bottom Sheet</string>
     <string name="update">Update</string>
     <string name="phone_no">Phone No</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_camera">Camera</string>
+    <string name="content_description" />
+
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Cras feugiat, nunc eget volutpat viverra, lacus ligula venenatis nulla,
+        in accumsan eros eros nec ipsum. Fusce eget massa id lorem blandit lobortis.
+        Donec lacus ligula, commodo quis eleifend ac, rhoncus sed mi. Curabitur luctus justo
+        vel consequat fermentum. Donec facilisis elit in sem suscipit pharetra. Curabitur porta et dolor eget pretium.
+        Mauris quam augue, interdum nec tempor vitae, consectetur at erat.</string>
+    <string name="sending">Sending</string>
 </resources>

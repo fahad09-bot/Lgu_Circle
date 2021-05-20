@@ -1,9 +1,13 @@
 package com.codesses.lgucircle.model;
 
 public class User {
-    private String date_of_birth, department, email, first_name, last_name, password, phone, profile_img;
+    private String date_of_birth, department, email, first_name, last_name, password, phone, profile_img, u_id;
 
     public User() {
+    }
+
+    public String getU_id() {
+        return u_id;
     }
 
     public String getDate_of_birth() {

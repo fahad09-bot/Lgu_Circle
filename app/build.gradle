@@ -13,7 +13,7 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -29,6 +29,7 @@ android {
     }
     buildFeatures {
         dataBinding true
+        viewBinding true
     }
 }
 
@@ -62,10 +63,8 @@ dependencies {
     // Cardview
     implementation "androidx.cardview:cardview:1.0.0"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'com.android.support:design:27.1.1'
-    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support.constraint:constraint-layout:2.0.4'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 //Glide
@@ -80,5 +79,13 @@ dependencies {
     //Firebase-UI Library
     implementation 'com.firebaseui:firebase-ui-database:4.3.1'
     //COUNTRY CODE PICKER
-    implementation 'com.hbb20:ccp:2.4.0'
+    implementation 'com.hbb20:ccp:2.4.4'
+    //    TODO: See More
+    implementation 'com.borjabravo:readmoretextview:2.1.0'
+
+    //    TODO: Rich Link
+    implementation 'io.github.ponnamkarthik:richlinkpreview:1.0.9'
+
+    //    TODO: jsoup
+    implementation 'org.jsoup:jsoup:1.11.2'
 }

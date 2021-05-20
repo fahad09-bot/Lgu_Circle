@@ -7,18 +7,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.codesses.lgucircle.Adapters.ProfilePagerAdapter;
 import com.codesses.lgucircle.Adapters.UserPostAdapter;
+import com.codesses.lgucircle.Adapters.UserTabsAdapter;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.databinding.YourprofileBinding;
 import com.codesses.lgucircle.model.Post;
 import com.codesses.lgucircle.model.User;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -30,6 +37,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
 public class YourprofileActivity extends AppCompatActivity {
 
@@ -48,35 +57,34 @@ public class YourprofileActivity extends AppCompatActivity {
     TextView Name;
     @BindView(R.id.game)
     TextView Game;
-    @BindView(R.id.recycler_view)
-    RecyclerView Recycler_View;
+
+    YourprofileBinding binding;
 
     //  TODO: Variables
     String userId;
 
-    LinkedList<Post> postList;
-
-    UserPostAdapter userPostAdapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.yourprofile);
-
         mContext = this;
-        ButterKnife.bind(this);
-        postList = new LinkedList<>();
+        binding = YourprofileBinding.bind(LayoutInflater.from(mContext).inflate(R.layout.yourprofile, null));
+        setContentView(binding.getRoot());
+        ButterKnife.bind(mContext);
 
 
 //        TODO: Get Intent
 //
         userId = getIntent().getStringExtra("User_Id");
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-        Recycler_View.setLayoutManager(linearLayoutManager);
+        binding.tabLayout.addTab(binding.tabLayout.newTab().setIcon(R.drawable.ic_post));
+        binding.tabLayout.addTab(binding.tabLayout.newTab().setIcon(R.drawable.ic_services));
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mContext, linearLayoutManager.getOrientation());
-        Recycler_View.addItemDecoration(dividerItemDecoration);
+        final ProfilePagerAdapter adapter = new ProfilePagerAdapter(
+                getSupportFragmentManager(),
+                BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
+                binding.tabLayout.getTabCount());
+
+        binding.viewPager.setAdapter(adapter);
 
         Log.d("UserId", userId);
 
@@ -84,17 +92,42 @@ public class YourprofileActivity extends AppCompatActivity {
             Edit.setVisibility(View.VISIBLE);
         }
 
+        binding.tabLayout.getTabAt(0).getIcon()
+                .setColorFilter(
+                        getResources().getColor(R.color.Green), PorterDuff.Mode.SRC_IN);
+
         //        TODO: Get User Data
         getUserData();
-//        TODO: Get Profile Data
-        getProfileData();
+
+        binding.viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(binding.tabLayout));
+        binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                binding.viewPager.setCurrentItem(tab.getPosition());
+                binding.tabLayout.getTabAt(tab.getPosition()).getIcon()
+                        .setColorFilter(
+                                getResources().getColor(R.color.Green), PorterDuff.Mode.SRC_IN);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                binding.tabLayout.getTabAt(tab.getPosition()).getIcon()
+                        .setColorFilter(
+                                getResources().getColor(R.color.blue_grey_300), PorterDuff.Mode.SRC_IN);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+
+        });
 
 
 //        TODO: Click Listeners
         Back_Press.setOnClickListener(this::backPress);
         Edit.setOnClickListener(this::openEditProfile);
-    }
 
+    }
     private void openEditProfile(View view) {
 
         startActivity(new Intent(mContext, EditProfileActivity.class));
@@ -129,33 +162,7 @@ public class YourprofileActivity extends AppCompatActivity {
 
     }
 
-    private void getProfileData() {
-        FirebaseRef.getPostsRef()
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.hasChildren()) {
-                            postList.clear();
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                Post model = snapshot.getValue(Post.class);
-                                if (model.getPosted_by().equals(userId)) {
-                                    postList.addFirst(model);
-                                }
-                            }
-                            Log.e("POSTSUSER", String.valueOf(postList.size()));
 
-                            userPostAdapter = new UserPostAdapter(mContext, postList);
-                            Recycler_View.setAdapter(userPostAdapter);
-
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-    }
 }
 
 
