@@ -76,18 +76,11 @@ public class PostUploadAVActivity extends AppCompatActivity {
         //   TODO: Get Current User
         getCurrentUserData();
 
-
-
         //        TODO: Click Listeners
         Back_Press.setOnClickListener(this::backPress);
         Post_Upload.setOnClickListener(this::getPostData);
         Add_image.setOnClickListener(this::galleryPermission);
     }
-
-
-
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -101,8 +94,6 @@ public class PostUploadAVActivity extends AppCompatActivity {
         }
 
     }
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -123,12 +114,9 @@ public class PostUploadAVActivity extends AppCompatActivity {
 
         }
     }
-
-
     /***********************************
      * Methods Call In Current Activity
      */
-
     private void backPress(View view) {
         onBackPressed();
     }

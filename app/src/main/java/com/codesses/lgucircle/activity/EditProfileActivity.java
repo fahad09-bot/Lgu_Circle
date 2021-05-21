@@ -110,9 +110,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private void updateData(View view) {
         String firstName = E_FName.getText().toString().trim();
         String lastName = E_LName.getText().toString().trim();
-//        String countryCode = Sp_Country_Code.getSelectedCountryCode();
         String phoneNo = E_Phone_No.getText().toString().trim();
-//        String phone = countryCode + phoneNo;
 
         if (CheckEmptyFields.isEditText(mContext, firstName, E_FName) &&
                 CheckEmptyFields.isEditText(mContext, lastName, E_LName) &&
