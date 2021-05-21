@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.activity.EventsActivity;
 import com.codesses.lgucircle.activity.IncubationActivity;
-import com.codesses.lgucircle.activity.ServicesActivity;
+import com.codesses.lgucircle.activity.Services.ServicesActivity;
 import com.codesses.lgucircle.databinding.FragmentExtraBinding;
 
 /**

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        android:background="@drawable/service_shape"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/service_description"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:layout_margin="@dimen/_15sdp"
+            android:background="@color/white"
+            android:gravity="start|top"
+            android:hint="@string/which_service"
+            android:maxLength="500"
+            android:padding="@dimen/_5sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/service_links"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@color/white"
+            android:hint=" (Optional) Add Links"
+            app:layout_constraintEnd_toEndOf="@id/service_description"
+            app:layout_constraintStart_toStartOf="@id/service_description"
+            app:layout_constraintTop_toBottomOf="@id/service_description" />
+
+        <Button
+            android:id="@+id/service_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:text="Upload"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/Green"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/service_links"
+            app:layout_constraintTop_toBottomOf="@id/service_links" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

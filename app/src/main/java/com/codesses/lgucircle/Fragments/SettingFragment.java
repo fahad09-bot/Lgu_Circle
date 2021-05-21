@@ -175,7 +175,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         User model = dataSnapshot.getValue(User.class);
 
-                        if (!TextUtils.isEmpty(model.getProfile_img())) {
+                        if (model.getProfile_img() != null) {
                             Picasso.get().load(model.getProfile_img()).into(Profile_Img);
                         }
                         User_Name.setText(model.getFirst_name() + " " + model.getLast_name());

@@ -11,7 +11,9 @@ import java.util.UUID;
 
 public class FirebaseRef {
 
-    public static FirebaseAuth getAuth() { return FirebaseAuth.getInstance(); }
+    public static FirebaseAuth getAuth() {
+        return FirebaseAuth.getInstance();
+    }
 
     public static FirebaseUser getCurrentUser() {
         return getAuth().getCurrentUser();
@@ -24,9 +26,11 @@ public class FirebaseRef {
     public static String getUserEmail() {
         return getAuth().getCurrentUser().getEmail();
     }
+
     public static String getUserId() {
         return getAuth().getCurrentUser().getUid();
     }
+
     //    TODO: Firebase Database
     public static DatabaseReference getDatabaseInstance() {
         return FirebaseDatabase.getInstance().getReference();
@@ -45,9 +49,21 @@ public class FirebaseRef {
     public static DatabaseReference getCommentRef() {
         return getDatabaseInstance().child("comments");
     }
-//    public static DatabaseReference getDemoRef() {
-//        return getDatabaseInstance().child("Demo");
-//    }
+
+    //    TODO: Get Services Reference
+    public static DatabaseReference getServiceRef() {
+        return getDatabaseInstance().child("services");
+    }
+
+    //    TODO: Get Chats Reference
+    public static DatabaseReference getMessageRef() {
+        return getDatabaseInstance().child("messages");
+    }
+
+    //    TODO: Get ChatLists Reference
+    public static DatabaseReference getConversationRef() {
+        return getDatabaseInstance().child("conversations");
+    }
 
     /****************************
      *   Firebase Storage
@@ -63,6 +79,11 @@ public class FirebaseRef {
     //    TODO: Get Post Storage Reference
     public static StorageReference getPostStorage() {
         return getStorageInstance().child("Posts/").child("Images/" + UUID.randomUUID().toString());
+    }
+
+    //    TODO: Get Message Storage Reference
+    public static StorageReference getMessageStorage() {
+        return getStorageInstance().child("Messages/").child("Images/" + UUID.randomUUID().toString());
     }
 
 }
