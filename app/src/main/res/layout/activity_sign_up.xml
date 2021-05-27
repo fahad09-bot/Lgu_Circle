@@ -78,8 +78,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/signup_email"
-
         />
+
+    <EditText
+        android:id="@+id/roll_no"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:hint="Fa-2017-bscs-400"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dep"
+        />
+
 
     <EditText
         android:id="@+id/dob"
@@ -92,7 +105,7 @@
         android:inputType="date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dep" />
+        app:layout_constraintTop_toBottomOf="@id/roll_no" />
 
     <EditText
         android:id="@+id/phone_no"
@@ -127,6 +140,7 @@
         android:layout_margin="@dimen/_10sdp"
         android:text="@string/sign_up"
         app:backgroundTint="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signup_pass" />
 
@@ -138,6 +152,7 @@
         android:layout_margin="@dimen/_10sdp"
         android:text="@string/already_user"
         app:backgroundTint="@color/red"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signup_pass" />
 

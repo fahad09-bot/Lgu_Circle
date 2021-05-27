@@ -3,13 +3,16 @@ package com.codesses.lgucircle.activity.Services;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,6 +41,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,9 +77,45 @@ public class ServicesActivity extends AppCompatActivity {
         });
         binding.servicesRecycler.setAdapter(servicesAdapter);
 
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder, @NonNull @NotNull RecyclerView.ViewHolder target) {
+                return false;
+            }
 
-//        binding.servicesRecycler.setAdapter(new ServicesAdapter(mContext, servicesList));
+            @Override
+            public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                deleteService(position);
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(binding.servicesRecycler);
+
         getServices();
+    }
+
+    private void deleteService(int position) {
+        FirebaseRef
+                .getServiceRef()
+                .child(servicesList.get(position).getS_id())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            Service service = dataSnapshot.getValue(Service.class);
+                            assert service != null;
+                            if (service.getPosted_by().equals(FirebaseRef.getCurrentUserId()))
+                                dataSnapshot.getRef().removeValue();
+                            else
+                                Toast.makeText(mContext, "You cannot delete this post", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Log.e("OnCancelled", error.getMessage());
+                    }
+                });
     }
 
     private void getServices() {
@@ -136,34 +177,28 @@ public class ServicesActivity extends AppCompatActivity {
                 String link = dialogBinding.serviceLinks.getText().toString();
                 if (TextUtils.isEmpty(link))
                     mapService.put("Url", "");
-                else
-                    if (!Patterns.WEB_URL.matcher(link).matches())
-                    {
-                        dialogBinding.serviceLinks.setError("Please Enter Valid Email");
-                        return;
-                    }
-                    else
-                        mapService.put("Url", link);
+                else if (!Patterns.WEB_URL.matcher(link).matches()) {
+                    dialogBinding.serviceLinks.setError("Please Enter Valid Email");
+                    return;
+                } else
+                    mapService.put("Url", link);
 
                 mapService.put("time_stamp", System.currentTimeMillis());
 
                 FirebaseRef.getServiceRef()
                         .child(serviceId)
                         .updateChildren(mapService)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(mContext, "Service Uploaded", Toast.LENGTH_SHORT).show();
-                                    ProgressDialog.DismissProgressDialog();
-                                    dialog.dismiss();
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(mContext, "Service Uploaded", Toast.LENGTH_SHORT).show();
+                                ProgressDialog.DismissProgressDialog();
+                                dialog.dismiss();
 //                            onBackPressed();
-                                } else {
-                                    ProgressDialog.DismissProgressDialog();
-                                    String error = task.getException().getMessage();
-                                    Toast.makeText(mContext, "Error: " + error, Toast.LENGTH_SHORT).show();
+                            } else {
+                                ProgressDialog.DismissProgressDialog();
+                                String error = task.getException().getMessage();
+                                Toast.makeText(mContext, "Error: " + error, Toast.LENGTH_SHORT).show();
 
-                                }
                             }
                         });
             }

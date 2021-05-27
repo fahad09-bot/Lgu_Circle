@@ -64,6 +64,9 @@ public class FirebaseRef {
     public static DatabaseReference getConversationRef() {
         return getDatabaseInstance().child("conversations");
     }
+    public static DatabaseReference getIdeaRef() {
+        return getDatabaseInstance().child("ideas");
+    }
 
     /****************************
      *   Firebase Storage

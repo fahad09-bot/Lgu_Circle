@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -16,6 +15,8 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@null"
             android:singleLine="true"
+            android:hint="Enter user name"
+            android:textColorHint="@color/md_blue_grey_600"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintTop_toTopOf="parent" />
 

@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.codesses.lgucircle.Interfaces.OnImageClick;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.model.Chat;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
@@ -23,13 +25,14 @@ public class MessageAdapter extends RecyclerView.Adapter<ViewHolderMessage> {
 
     Context mContext;
     List<Chat> mChat;
-
     FirebaseUser fuser;
     View view;
+    OnImageClick onImageClick;
 
-    public MessageAdapter(Context mContext, List<Chat> mChat) {
+    public MessageAdapter(Context mContext, List<Chat> mChat, OnImageClick onImageClick) {
         this.mChat = mChat;
         this.mContext = mContext;
+        this.onImageClick = onImageClick;
     }
 
 
@@ -47,7 +50,7 @@ public class MessageAdapter extends RecyclerView.Adapter<ViewHolderMessage> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolderMessage holder, final int position) {
         Chat chat = mChat.get(position);
-        holder.onBind(chat);
+        holder.onBind(chat, onImageClick);
 
 
     }

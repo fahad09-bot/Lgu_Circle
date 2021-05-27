@@ -82,12 +82,12 @@
                         android:text="@string/your_profile"
                         android:textColor="@color/black"
                         android:drawablePadding="@dimen/_5sdp"
-                        android:drawableLeft="@drawable/ic_mypro"
                         android:textSize="@dimen/_14ssp"
                         android:gravity="start|center_vertical"
                         android:layout_centerVertical="true"
                         android:textStyle="bold"
-                        app:drawableRightCompat="@drawable/ic_next" />
+                        app:drawableRightCompat="@drawable/ic_next"
+                        app:drawableLeftCompat="@drawable/ic_mypro" />
 
 
                 </RelativeLayout>
@@ -196,6 +196,7 @@
                         android:textColor="@color/black"
                         android:textSize="@dimen/_14ssp"
                         android:textStyle="bold"
+                        android:drawablePadding="@dimen/_5sdp"
                         android:drawableLeft="@drawable/ic_info"
                         android:gravity="start|center_vertical"
                         android:layout_centerVertical="true"
@@ -231,6 +232,7 @@
                         android:layout_height="match_parent"
                         android:text="@string/sign_out"
                         android:textColor="@color/black"
+                        android:drawablePadding="@dimen/_5sdp"
                         android:textSize="@dimen/_14ssp"
                         android:textStyle="bold"
                         android:drawableLeft="@drawable/ic_logout"

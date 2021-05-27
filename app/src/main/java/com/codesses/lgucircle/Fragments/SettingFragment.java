@@ -50,16 +50,12 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     TextView User_Name;
     @BindView(R.id.user_email)
     TextView User_Email;
-    @BindView(R.id.user_phone_no)
-    TextView User_Phone_No;
     @BindView(R.id.your_profile_cv)
     CardView Your_Profile_Cv;
     @BindView(R.id.change_pass_cv)
     CardView Change_Pass_Cv;
     @BindView(R.id.contact_us_cv)
     CardView Contact_Us_Cv;
-    @BindView(R.id.feed_back_cv)
-    CardView Feed_Back_Cv;
     @BindView(R.id.about_cv)
     CardView About_Cv;
     @BindView(R.id.sign_out_cv)
@@ -112,7 +108,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         Your_Profile_Cv.setOnClickListener(this);
         Change_Pass_Cv.setOnClickListener(this);
         Contact_Us_Cv.setOnClickListener(this);
-        Feed_Back_Cv.setOnClickListener(this);
         About_Cv.setOnClickListener(this);
         Sign_Out_Cv.setOnClickListener(this);
 
@@ -140,11 +135,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), "Coming Soon", Toast.LENGTH_SHORT).show();
 
                 break;
-            case R.id.feed_back_cv:
 
-                Toast.makeText(getActivity(), "Coming Soon", Toast.LENGTH_SHORT).show();
-
-                break;
             case R.id.about_cv:
 
                 Toast.makeText(getActivity(), "Coming Soon", Toast.LENGTH_SHORT).show();
@@ -180,7 +171,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                         }
                         User_Name.setText(model.getFirst_name() + " " + model.getLast_name());
                         User_Email.setText(model.getEmail());
-                        User_Phone_No.setText(model.getPhone());
                     }
 
 

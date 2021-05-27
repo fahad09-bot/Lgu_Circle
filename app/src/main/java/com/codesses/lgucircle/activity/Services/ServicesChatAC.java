@@ -3,23 +3,28 @@ package com.codesses.lgucircle.activity.Services;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
-import com.codesses.lgucircle.Adapters.Chat;
+import com.codesses.lgucircle.model.Chat;
 import com.codesses.lgucircle.Adapters.MessageAdapter;
 import com.codesses.lgucircle.Dialogs.MenuDialog;
 import com.codesses.lgucircle.Dialogs.MsgImgUpDialog;
 import com.codesses.lgucircle.Dialogs.ProgressDialog;
+import com.codesses.lgucircle.Interfaces.OnImageClick;
 import com.codesses.lgucircle.Interfaces.SendData;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.CheckEmptyFields;
 import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.activity.ImageViewActivity;
 import com.codesses.lgucircle.databinding.ActivityServicesChatBinding;
 import com.codesses.lgucircle.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,7 +45,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ServicesChatAC extends AppCompatActivity {
+public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
 
     ActivityServicesChatBinding binding;
     AppCompatActivity mContext;
@@ -61,16 +66,24 @@ public class ServicesChatAC extends AppCompatActivity {
         binding.btnBack.setOnClickListener(v -> finish());
         getUserData();
 
-        messageAdapter = new MessageAdapter(mContext, messageList);
+        messageAdapter = new MessageAdapter(mContext, messageList, this);
         binding.chatRecycler.setAdapter(messageAdapter);
         binding.send.setOnClickListener(this::sendMessage);
         binding.attach.setOnClickListener(this::openDialogue);
-        makingChatList();
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder, @NonNull @NotNull RecyclerView.ViewHolder target) {
+                return false;
+            }
 
+            @Override
+            public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                deleteMessage(position);
+            }
+        });
         setAdapter();
     }
-
-
 
     private void openDialogue(View view) {
         MenuDialog menuDialog = new MenuDialog(mContext, new SendData() {
@@ -158,6 +171,7 @@ public class ServicesChatAC extends AppCompatActivity {
     }
 
     private void sendMessage(View view) {
+        makingChatList();
         ProgressDialog.ShowProgressDialog(mContext, R.string.sending, R.string.please_wait);
         if (CheckEmptyFields.isEditText(mContext, binding.message.getText().toString(), binding.message)) {
             String messageId = FirebaseRef.getMessageRef().push().getKey();
@@ -167,6 +181,7 @@ public class ServicesChatAC extends AppCompatActivity {
             message.put("sender_id", FirebaseRef.getCurrentUserId());
             message.put("receiver_id", userId);
             message.put("type", 0);
+            message.put("message", binding.message.getText().toString().trim());
             message.put("timestamp", String.valueOf(System.currentTimeMillis()));
 
             FirebaseRef.getMessageRef().child(FirebaseRef.getCurrentUserId()).push().setValue(message);
@@ -180,17 +195,17 @@ public class ServicesChatAC extends AppCompatActivity {
 
     private void sendMessage() {
         String messageId = FirebaseRef.getMessageRef().push().getKey();
-
+        makingChatList();
         HashMap<String, Object> msg = new HashMap<>();
         msg.put("m_id", messageId);
         msg.put("sender_id", FirebaseRef.getCurrentUserId());
         msg.put("receiver_id", userId);
-        msg.put("messageImage", selectedImage.toString());
+        msg.put("messageImage", imageUrl);
         if (TextUtils.isEmpty(this.message))
             msg.put("type", 1);
         else {
             msg.put("type", 2);
-            msg.put("message", this.message);
+            msg.put("message", this.message.trim());
         }
         msg.put("timestamp", String.valueOf(System.currentTimeMillis()));
 
@@ -198,6 +213,7 @@ public class ServicesChatAC extends AppCompatActivity {
         FirebaseRef.getMessageRef().child(userId).push().setValue(msg);
         binding.message.setText("");
         ProgressDialog.DismissProgressDialog();
+
     }
 
 
@@ -216,6 +232,7 @@ public class ServicesChatAC extends AppCompatActivity {
                             }
                         }
                         messageAdapter.notifyDataSetChanged();
+                        binding.chatRecycler.scrollToPosition(messageList.size() - 1);
 
 
                     }
@@ -266,5 +283,32 @@ public class ServicesChatAC extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    public void onImageClick(String imageUrl) {
+        Intent intent = new Intent(mContext, ImageViewActivity.class);
+        intent.putExtra(getString(R.string.intent_open_full_screen_image), imageUrl);
+        startActivity(intent);
+    }
+
+
+    private void deleteMessage(int position) {
+        FirebaseRef
+                .getMessageRef()
+                .child(messageList.get(position).getM_id())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            dataSnapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                    }
+                });
+    }
 
 }

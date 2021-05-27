@@ -71,8 +71,15 @@ public class MsgImgUpDialog extends DialogFragment {
         binding = FragmentMsgImgUpDialogBinding.bind(fragmentActivity.getLayoutInflater().inflate(R.layout.fragment_msg_img_up_dialog, container, false));
 
         binding.sendMessage.setOnClickListener(this::sendMessage);
-        Picasso.get().load(imageUrl).into(binding.image);
-        Picasso.get().load(userImage).into(binding.userImage);
+        Picasso.get()
+                .load(imageUrl)
+                .centerCrop()
+                .resize(500, 500)
+                .into(binding.image);
+        
+        Picasso.get()
+                .load(userImage)
+                .into(binding.userImage);
 
         return binding.getRoot();
     }

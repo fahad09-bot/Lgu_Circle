@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import com.bumptech.glide.Glide;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.databinding.ActivityImageViewBinding;
+import com.squareup.picasso.Picasso;
 
 
 public class ImageViewActivity extends AppCompatActivity {
@@ -30,8 +31,6 @@ public class ImageViewActivity extends AppCompatActivity {
 
     //    TODO: Variables
     private String imageUri = "";
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +45,11 @@ public class ImageViewActivity extends AppCompatActivity {
 
 //        TODO: Getting intent & show full screen image
         imageUri = getIntent().getStringExtra(getString(R.string.intent_open_full_screen_image));
-        Glide.with(mContext).load(imageUri).into(binding.imageView);
+        Picasso.get()
+                .load(imageUri)
+                .resize(500, 500)
+                .centerCrop()
+                .into(binding.imageView);
 
 
 //        TODO: Click listener

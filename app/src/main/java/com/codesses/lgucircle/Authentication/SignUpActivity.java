@@ -47,6 +47,8 @@ public class SignUpActivity extends AppCompatActivity {
     EditText Date_of_birth;
     @BindView(R.id.phone_no)
     EditText Phone_number;
+    @BindView(R.id.roll_no)
+    EditText Roll_no;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,14 +73,15 @@ public class SignUpActivity extends AppCompatActivity {
         String dep = Department.getText().toString().trim();
         String dob = Date_of_birth.getText().toString().trim();
         String phone = Phone_number.getText().toString().trim();
-        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(f_name) && !TextUtils.isEmpty(l_name) && !TextUtils.isEmpty(dep) && !TextUtils.isEmpty(dob) && !TextUtils.isEmpty(phone)) {
-            signup(email, pass, f_name, l_name, dep, dob, phone);
+        String roll_no = Roll_no.getText().toString().trim().toLowerCase();
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(f_name) && !TextUtils.isEmpty(l_name) && !TextUtils.isEmpty(dep) && !TextUtils.isEmpty(dob) && !TextUtils.isEmpty(phone) &&!TextUtils.isEmpty(roll_no)) {
+            signup(email, pass, f_name, l_name, dep, dob, phone, roll_no);
         } else {
             Toast.makeText(this, "Fields Must be Filled", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void signup(String email, String pass, String f_name, String l_name, String dep, String dob, String phone) {
+    private void signup(String email, String pass, String f_name, String l_name, String dep, String dob, String phone, String roll_no) {
         FirebaseRef.getAuth()
                 .createUserWithEmailAndPassword(email, pass)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -86,7 +89,7 @@ public class SignUpActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseRef.getCurrentUser().sendEmailVerification();
-                            dataSaveToFirebase(email, pass, f_name, l_name, dep, dob, phone);
+                            dataSaveToFirebase(email, pass, f_name, l_name, dep, dob, phone, roll_no);
                         } else {
                             Toast.makeText(SignUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -94,7 +97,7 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-    private void dataSaveToFirebase(String email, String pass, String f_name, String l_name, String dep, String dob, String phone) {
+    private void dataSaveToFirebase(String email, String pass, String f_name, String l_name, String dep, String dob, String phone, String roll_no) {
         String userId = FirebaseRef.getCurrentUserId();
 
         Map<String, Object> map = new HashMap<>();
@@ -106,6 +109,7 @@ public class SignUpActivity extends AppCompatActivity {
         map.put("first_name", f_name);
         map.put("last_name", l_name);
         map.put("department", dep);
+        map.put("roll_no", roll_no);
         map.put("date_of_birth", dob);
         map.put("phone", phone);
 

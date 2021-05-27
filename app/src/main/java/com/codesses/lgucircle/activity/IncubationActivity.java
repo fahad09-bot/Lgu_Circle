@@ -1,11 +1,9 @@
 package com.codesses.lgucircle.activity;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.codesses.lgucircle.R;
-import com.codesses.lgucircle.Utils.CheckEmptyFields;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.databinding.IncubationBinding;
 import com.codesses.lgucircle.model.User;
@@ -23,9 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
-import java.util.Map;
 
-import butterknife.BindView;
 
 public class IncubationActivity extends AppCompatActivity {
     AppCompatActivity mContext;
@@ -39,9 +34,10 @@ public class IncubationActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(mContext, R.layout.incubation);
 
 //        Get current user data
+
+        binding.register.setOnClickListener(this::registerIdea);
         getCurrentUserData();
     }
-
 
     private void getCurrentUserData() {
         FirebaseRef.getUserRef()
@@ -55,6 +51,7 @@ public class IncubationActivity extends AppCompatActivity {
                         binding.iEmail.setText(user.getEmail());
                         binding.iPhoneNo.setText(user.getPhone());
                         binding.department.setText(user.getDepartment());
+                        binding.rollNo.setText(user.getRoll_no());
 
                     }
 
@@ -65,4 +62,23 @@ public class IncubationActivity extends AppCompatActivity {
                 });
 
     }
+
+
+    private void registerIdea(View view) {
+
+        String pitch = binding.pitch.getText().toString();
+
+        if (!TextUtils.isEmpty(pitch))
+        {
+            String pitch_id = FirebaseRef.getIdeaRef().push().getKey();
+            HashMap<String, Object> ideaMap = new HashMap<>();
+            ideaMap.put("i_id", pitch_id);
+            ideaMap.put("pitched_by", FirebaseRef.getCurrentUserId());
+            ideaMap.put("pitch", pitch);
+            FirebaseRef.getIdeaRef().child(pitch_id).push().setValue(ideaMap);
+
+        }
+    }
+
+
 }

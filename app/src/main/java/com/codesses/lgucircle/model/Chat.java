@@ -1,4 +1,4 @@
-package com.codesses.lgucircle.Adapters;
+package com.codesses.lgucircle.model;
 
 public class Chat {
 

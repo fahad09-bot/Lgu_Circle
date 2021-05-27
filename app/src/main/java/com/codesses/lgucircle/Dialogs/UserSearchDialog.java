@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UserSearchDialog extends BottomSheetDialogFragment {
+public class UserSearchDialog extends DialogFragment {
 
     FragmentUserSearchDialogBinding binding;
     FragmentActivity fragmentActivity;
@@ -44,6 +44,7 @@ public class UserSearchDialog extends BottomSheetDialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentActivity = getActivity();
+        setStyle(STYLE_NORMAL, R.style.FullScreenBottomSheetDialog);
     }
 
     @Override

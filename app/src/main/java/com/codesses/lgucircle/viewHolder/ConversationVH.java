@@ -1,12 +1,11 @@
 package com.codesses.lgucircle.viewHolder;
 
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.codesses.lgucircle.Adapters.Chat;
+import com.codesses.lgucircle.model.Chat;
 import com.codesses.lgucircle.Interfaces.OnConversationClick;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.databinding.UserItemBinding;
@@ -29,8 +28,7 @@ public class ConversationVH extends RecyclerView.ViewHolder {
         this.userItemBinding = userItemBinding;
     }
 
-    public void onBind(User user, OnConversationClick onConversationClick)
-    {
+    public void onBind(User user, OnConversationClick onConversationClick) {
         userItemBinding.userName.setText(user.getFirst_name() + " " + user.getLast_name());
         Picasso.get().load(user.getProfile_img()).into(userItemBinding.userImage);
         itemView.setOnClickListener(v -> onConversationClick.onClick(user.getU_id()));
@@ -43,24 +41,21 @@ public class ConversationVH extends RecyclerView.ViewHolder {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
                     if (FirebaseRef.getCurrentUser() != null && chat != null) {
                         if (chat.getReceiver_id().equals(FirebaseRef.getUserId()) && chat.getSender_id().equals(user.getU_id()) ||
                                 chat.getReceiver_id().equals(user.getU_id()) && chat.getSender_id().equals(FirebaseRef.getUserId())) {
-                            if (chat.getType()==0 || chat.getType()==2) {
+                            if (chat.getType() == 0 || chat.getType() == 2) {
                                 theLastMessage = chat.getMessage();
                                 userItemBinding.lastMessage.setVisibility(View.VISIBLE);
                                 userItemBinding.lastMessageImage.setVisibility(View.GONE);
-                            }
-                            else if (chat.getType() == 1)
-                            {
+                                userItemBinding.lastMessage.setText(theLastMessage);
+                            } else if (chat.getType() == 1) {
                                 userItemBinding.lastMessageImage.setVisibility(View.VISIBLE);
                                 userItemBinding.lastMessage.setVisibility(View.GONE);
                             }
-                        }
-                        else
-                        {
+                        } else {
                             userItemBinding.lastMessageImage.setVisibility(View.GONE);
                             userItemBinding.lastMessage.setVisibility(View.VISIBLE);
                             userItemBinding.lastMessage.setText("No message");
@@ -68,8 +63,6 @@ public class ConversationVH extends RecyclerView.ViewHolder {
                     }
 
                 }
-
-
 
 
             }

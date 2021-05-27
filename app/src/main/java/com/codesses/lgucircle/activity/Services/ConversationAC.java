@@ -3,9 +3,12 @@ package com.codesses.lgucircle.activity.Services;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.codesses.lgucircle.Adapters.ConversationAdapter;
@@ -15,6 +18,7 @@ import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.databinding.ActivityConversationBinding;
+import com.codesses.lgucircle.model.Chat;
 import com.codesses.lgucircle.model.ChatList;
 import com.codesses.lgucircle.model.User;
 import com.google.firebase.database.DataSnapshot;
@@ -42,17 +46,27 @@ public class ConversationAC extends AppCompatActivity {
 
         binding.btnBack.setOnClickListener(v -> onBackPressed());
         binding.newConversation.setOnClickListener(this::createConversation);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder, @NonNull @NotNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                deleteConversation(position);
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(binding.conversationRecycler);
+
         getConversationList();
     }
-
     private void setAdapter() {
-        adapter = new ConversationAdapter(userList, mContext, new OnConversationClick() {
-            @Override
-            public void onClick(String userId) {
-                Intent intent = new Intent(mContext, ServicesChatAC.class);
-                intent.putExtra(Constants.USER_ID, userId);
-                startActivity(intent);
-            }
+        adapter = new ConversationAdapter(userList, mContext, userId -> {
+            Intent intent = new Intent(mContext, ServicesChatAC.class);
+            intent.putExtra(Constants.USER_ID, userId);
+            startActivity(intent);
         });
         binding.conversationRecycler.setAdapter(adapter);
     }
@@ -111,4 +125,47 @@ public class ConversationAC extends AppCompatActivity {
         UserSearchDialog userSearchDialog = new UserSearchDialog();
         userSearchDialog.show(mContext.getSupportFragmentManager(), "user search");
     }
+
+    private void deleteConversation(int position) {
+        FirebaseRef.getConversationRef()
+                .child(FirebaseRef.getCurrentUserId())
+                .child(userList.get(position).getU_id())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot: snapshot.getChildren())
+                        {
+                            dataSnapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Log.e("onCancelled", error.getMessage());
+                    }
+                });
+
+        FirebaseRef.getMessageRef()
+                .child(FirebaseRef.getCurrentUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot: snapshot.getChildren())
+                        {
+                            Chat chat = dataSnapshot.getValue(Chat.class);
+                            if (chat.getReceiver_id().equals(FirebaseRef.getUserId()) && chat.getSender_id().equals(userList.get(position).getU_id()) ||
+                                    chat.getReceiver_id().equals(userList.get(position).getU_id()) && chat.getSender_id().equals(FirebaseRef.getCurrentUserId()))
+                            {
+                                dataSnapshot.getRef().removeValue();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Log.e("onCancelled", error.getMessage());
+                    }
+                });
+    }
+
 }

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.codesses.lgucircle">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <application
         android:allowBackup="true"
@@ -16,32 +18,34 @@
         <activity android:name=".activity.Services.ServicesChatAC" />
         <activity
             android:name=".activity.Services.ServicesActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+             />
         <activity android:name=".activity.PostUploadAVActivity" />
         <activity
             android:name=".activity.ImageViewActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+             />
         <activity
             android:name=".activity.YourprofileActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+             />
         <activity android:name=".Authentication.LoginActivity" />
         <activity android:name=".Authentication.SignUpActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity
             android:name=".activity.CommentActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+             />
         <activity
             android:name=".activity.EditProfileActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+             />
         <activity
             android:name=".SplashActivity.SplashActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.IncubationActivity"
+            />
     </application>
 
 </manifest>

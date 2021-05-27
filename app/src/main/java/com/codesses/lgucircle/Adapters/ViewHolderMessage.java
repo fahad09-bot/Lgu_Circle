@@ -3,15 +3,15 @@ package com.codesses.lgucircle.Adapters;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.codesses.lgucircle.Interfaces.OnImageClick;
 import com.codesses.lgucircle.R;
+import com.codesses.lgucircle.model.Chat;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class ViewHolderMessage extends RecyclerView.ViewHolder {
 
     }
 
-    public void onBind(Chat chat) {
+    public void onBind(Chat chat, OnImageClick onImageClick) {
         if (viewType == 0)
             seenImage.setVisibility(View.GONE);
         else if (viewType == 1) {
@@ -66,7 +66,12 @@ public class ViewHolderMessage extends RecyclerView.ViewHolder {
             image_con.setVisibility(View.VISIBLE);
             showMessage.setVisibility(View.VISIBLE);
             showMessage.setText(chat.getMessage());
-            Picasso.get().load(chat.getMessageImage()).into(messageImage);
+            Picasso
+                    .get()
+                    .load(chat.getMessageImage())
+                    .centerCrop()
+                    .resize(200, 200)
+                    .into(messageImage);
         }
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         try {
@@ -77,5 +82,9 @@ public class ViewHolderMessage extends RecyclerView.ViewHolder {
 //
         String dateTime = DateFormat.format("hh:mm ", cal).toString();
         timeStamp.setText(dateTime);
+
+        messageImage
+                .setOnClickListener(v -> onImageClick
+                        .onImageClick(chat.getMessageImage()));
     }
 }
