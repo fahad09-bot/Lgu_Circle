@@ -97,17 +97,19 @@ public class ServicesActivity extends AppCompatActivity {
     private void deleteService(int position) {
         FirebaseRef
                 .getServiceRef()
-                .child(servicesList.get(position).getS_id())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             Service service = dataSnapshot.getValue(Service.class);
                             assert service != null;
-                            if (service.getPosted_by().equals(FirebaseRef.getCurrentUserId()))
-                                dataSnapshot.getRef().removeValue();
-                            else
-                                Toast.makeText(mContext, "You cannot delete this post", Toast.LENGTH_SHORT).show();
+                            if (service.getS_id().equals(servicesList.get(position).getS_id())) {
+                                if (service.getPosted_by().equals(FirebaseRef.getCurrentUserId()))
+                                    dataSnapshot.getRef().removeValue();
+                                else
+                                    Toast.makeText(mContext, "You cannot delete this post", Toast.LENGTH_SHORT).show();
+                            }
+
                         }
                     }
 
