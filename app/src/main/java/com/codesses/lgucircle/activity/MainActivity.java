@@ -3,15 +3,20 @@ package com.codesses.lgucircle.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.codesses.lgucircle.Adapters.UserTabsAdapter;
+import com.codesses.lgucircle.Dialogs.UserSearchDialog;
 import com.codesses.lgucircle.R;
+import com.codesses.lgucircle.activity.Services.ConversationAC;
 import com.google.android.material.tabs.TabLayout;
 
 import butterknife.BindView;
@@ -21,18 +26,15 @@ import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ON
 
 public class MainActivity extends AppCompatActivity {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-
 
     @BindView(R.id.tab_layout)
     TabLayout Tab_Layout;
     @BindView(R.id.view_pager)
     ViewPager View_Pager;
+    @BindView(R.id.search)
+    ImageView Search_Image;
+    @BindView(R.id.message)
+    ImageView Message_Image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,23 +70,22 @@ public class MainActivity extends AppCompatActivity {
             }
 
             });
+
+        Message_Image.setOnClickListener(this::startConversation);
+        Search_Image.setOnClickListener(this::showSearchDialog);
         }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // action with ID action_refresh was selected
-            case R.id.search_bar:
-                Toast.makeText(MainActivity.this, "Search", Toast.LENGTH_SHORT)
-                        .show();
-                break;
-            case R.id.menu:
-                Toast.makeText(MainActivity.this, "Menu", Toast.LENGTH_SHORT)
-                        .show();
-                break;
-            default:
-                break;
-        }
-        return true;
+    private void showSearchDialog(View view) {
+        UserSearchDialog userSearchDialog = new UserSearchDialog("MainActivity");
+        userSearchDialog.show(getSupportFragmentManager(), "user search");
     }
+
+
+
+
+    private void startConversation(View view) {
+        Intent intent = new Intent(MainActivity.this, ConversationAC.class);
+        startActivity(intent);
+    }
+
 }

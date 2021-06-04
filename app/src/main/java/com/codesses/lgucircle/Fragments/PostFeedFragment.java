@@ -104,9 +104,7 @@ public class PostFeedFragment extends Fragment {
                             sportsFeedList.clear();
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 Post model = snapshot.getValue(Post.class);
-                                if (model.getPosted_by_role().equals(getString(R.string.user_role))) {
                                     sportsFeedList.addFirst(model);
-                                }
                             }
 
                             adapter = new UserPostAdapter(mContext, sportsFeedList);

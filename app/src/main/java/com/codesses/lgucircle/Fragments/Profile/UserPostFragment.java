@@ -5,28 +5,30 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.codesses.lgucircle.Adapters.UserPostAdapter;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.databinding.FragmentUserPostBinding;
 import com.codesses.lgucircle.model.Post;
+import com.codesses.lgucircle.model.Service;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.LinkedList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link UserPostFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class UserPostFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -47,27 +49,14 @@ public class UserPostFragment extends Fragment {
 
     UserPostAdapter userPostAdapter;
 
-    public UserPostFragment() {
+    String userId;
+
+    public UserPostFragment(String userId) {
         // Required empty public constructor
+        this.userId = userId;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UserPostFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static UserPostFragment newInstance(String param1, String param2) {
-        UserPostFragment fragment = new UserPostFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,8 +73,47 @@ public class UserPostFragment extends Fragment {
         mContext = getActivity();
         // Inflate the layout for this fragment
         binding = FragmentUserPostBinding.bind(inflater.inflate(R.layout.fragment_user_post, container, false));
+
         getProfileData();
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder, @NonNull @NotNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                deletePost(position);
+            }
+        });
+        if (userId.equals(FirebaseRef.getUserId())) {
+            itemTouchHelper.attachToRecyclerView(binding.postsRecycler);
+        }
         return binding.getRoot();
+    }
+
+    private void deletePost(int position) {
+        FirebaseRef
+                .getPostsRef()
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            Post post = dataSnapshot.getValue(Post.class);
+                            assert post != null;
+                            if (post.getP_id().equals(postList.get(position).getP_id()) && post.getPosted_by().equals(FirebaseRef.getUserId())) {
+                                dataSnapshot.getRef().removeValue();
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Log.e("OnCancelled", error.getMessage());
+                    }
+                });
     }
 
 
@@ -98,12 +126,11 @@ public class UserPostFragment extends Fragment {
                             postList.clear();
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 Post model = snapshot.getValue(Post.class);
-                                if (model.getPosted_by().equals(FirebaseRef.getUserId())) {
+                                if (model.getPosted_by().equals(userId)) {
                                     postList.addFirst(model);
                                 }
                             }
                             Log.e("POSTSUSER", String.valueOf(postList.size()));
-
                             userPostAdapter = new UserPostAdapter(mContext, postList);
                             binding.postsRecycler.setAdapter(userPostAdapter);
 

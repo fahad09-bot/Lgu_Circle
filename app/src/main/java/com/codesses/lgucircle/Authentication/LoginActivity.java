@@ -15,22 +15,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codesses.lgucircle.Dialogs.ForgotPassDialog;
+import com.codesses.lgucircle.Dialogs.ProgressDialog;
+import com.codesses.lgucircle.activity.AuthorityAC;
 import com.codesses.lgucircle.activity.MainActivity;
 import com.codesses.lgucircle.Interfaces.OnForgotPass;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class LoginActivity extends AppCompatActivity implements OnForgotPass {
 
-    @BindView(R.id.radio_group)
-    RadioGroup Radio_group;
     @BindView(R.id.login_email)
     EditText Login_email;
     @BindView(R.id.login_pass)
@@ -52,17 +59,7 @@ public class LoginActivity extends AppCompatActivity implements OnForgotPass {
 //        TODO: Click Listeners
         New_user.setOnClickListener(this::createAccount);
         Login_btn.setOnClickListener(this::getUserData);
-        Forgot_pass.setOnClickListener(this::forgotPass);
 
-
-//        TODO: Radio Group Checked Listener
-        Radio_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = findViewById(checkedId);
-
-            }
-        });
 
     }
 
@@ -93,39 +90,68 @@ public class LoginActivity extends AppCompatActivity implements OnForgotPass {
         String pass = Login_pass.getText().toString().trim();
 
         if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
-            login(email, pass);
+            getUserType(email, pass);
         } else {
             Toast.makeText(this, "Fields Must be Filled", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void login(String email, String pass) {
+    private void getUserType(String email, String pass) {
+        Query query = FirebaseRef.getUserRef().orderByChild("email").equalTo(email);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() > 0) {
+
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        User model = snapshot.getValue(User.class);
+
+
+                        if (model.getType().equals("authority"))
+                            login(AuthorityAC.class, email, pass);
+                        else
+                            login(MainActivity.class, email, pass);
+                    }
+                } else {
+
+                    ProgressDialog.DismissProgressDialog();
+                    Toast.makeText(LoginActivity.this, "Alert! " + getString(R.string.not_register_user), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                ProgressDialog.DismissProgressDialog();
+                Toast.makeText(LoginActivity.this, "Alert! " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void login(Class activity, String email, String pass) {
         FirebaseRef.getAuth()
                 .signInWithEmailAndPassword(email, pass)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = FirebaseRef.getCurrentUser();
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = FirebaseRef.getCurrentUser();
 
-                            if (user.isEmailVerified()) {
+                        if (user.isEmailVerified()) {
 
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                finish();
-                                startActivity(intent);
-                            } else {
+                            Intent intent = new Intent(LoginActivity.this, activity);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        } else {
 
 //                                TODO: Sign Out For Email Verification
-                                FirebaseRef.getAuth().signOut();
-                                user.sendEmailVerification();
+                            FirebaseRef.getAuth().signOut();
+                            user.sendEmailVerification();
 
-                                Toast.makeText(LoginActivity.this, getString(R.string.email_verify_msg), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, getString(R.string.email_verify_msg), Toast.LENGTH_SHORT).show();
 
-                            }
-                        } else {
-                            Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -134,6 +160,7 @@ public class LoginActivity extends AppCompatActivity implements OnForgotPass {
         ForgotPassDialog forgotPassDialog = new ForgotPassDialog();
         forgotPassDialog.show(getSupportFragmentManager(), "Forgot Pass dialog");
     }
+
 
 
 }

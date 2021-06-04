@@ -1,7 +1,7 @@
 package com.codesses.lgucircle.model;
 
 public class Post {
-    private String p_id, posted_by, posted_by_role, status, image, video;
+    private String p_id, posted_by, status, image, video;
     private long timestamp;
     private int type;
 
@@ -20,9 +20,6 @@ public class Post {
         return posted_by;
     }
 
-    public String getPosted_by_role() {
-        return posted_by_role;
-    }
 
     public String getStatus() {
         return status;

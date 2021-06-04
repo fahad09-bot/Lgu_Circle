@@ -30,6 +30,13 @@ public class ConversationVH extends RecyclerView.ViewHolder {
 
     public void onBind(User user, OnConversationClick onConversationClick) {
         userItemBinding.userName.setText(user.getFirst_name() + " " + user.getLast_name());
+        if (user.getType().equals("staff")) {
+            userItemBinding.type.setText(" (" + user.getType() + ")");
+            userItemBinding.type.setVisibility(View.VISIBLE);
+        }else
+        {
+            userItemBinding.type.setVisibility(View.GONE);
+        }
         Picasso.get().load(user.getProfile_img()).into(userItemBinding.userImage);
         itemView.setOnClickListener(v -> onConversationClick.onClick(user.getU_id()));
         getLastMessage(user);

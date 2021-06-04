@@ -2,6 +2,7 @@ package com.codesses.lgucircle.Dialogs;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,9 @@ import com.codesses.lgucircle.Adapters.UserAdapter;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.activity.Services.ConversationAC;
 import com.codesses.lgucircle.activity.Services.ServicesChatAC;
+import com.codesses.lgucircle.activity.YourprofileActivity;
 import com.codesses.lgucircle.databinding.FragmentUserSearchDialogBinding;
 import com.codesses.lgucircle.model.User;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -35,9 +38,11 @@ public class UserSearchDialog extends DialogFragment {
     FragmentActivity fragmentActivity;
     UserAdapter userAdapter;
     List<User> userList = new ArrayList<>();
+    String activityName;
+    Intent intent;
 
-    public UserSearchDialog() {
-
+    public UserSearchDialog(String activityName) {
+        this.activityName = activityName;
     }
 
     @Override
@@ -65,7 +70,7 @@ public class UserSearchDialog extends DialogFragment {
                 for (DataSnapshot dataSnapshot: snapshot.getChildren())
                 {
                     User user = dataSnapshot.getValue(User.class);
-                    if (!user.getU_id().equals(FirebaseRef.getCurrentUserId()))
+                    if (!user.getU_id().equals(FirebaseRef.getCurrentUserId()) && !user.getType().equals("authority"))
                         userList.add(user);
                 }
                 setAdapter();
@@ -108,14 +113,20 @@ public class UserSearchDialog extends DialogFragment {
 
     private void setAdapter() {
         userAdapter = new UserAdapter(userList, fragmentActivity,
-                this::startChat);
+                this::activityStart);
         binding.userRecycler.setAdapter(userAdapter);
     }
 
-    private void startChat(String userId) {
-        Intent intent = new Intent(fragmentActivity, ServicesChatAC.class);
+    private void activityStart(String userId) {
+
+        if (TextUtils.equals(activityName, "ConversationAC"))
+            intent = new Intent( fragmentActivity, ServicesChatAC.class);
+        else if (TextUtils.equals(activityName, "MainActivity")) {
+            intent = new Intent(fragmentActivity, YourprofileActivity.class);
+        }
+
         intent.putExtra(Constants.USER_ID, userId);
-        startActivity(intent);
-        dismiss();
+        fragmentActivity.startActivity(intent);
+
     }
 }

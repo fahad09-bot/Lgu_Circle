@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.codesses.lgucircle.R;
-import com.codesses.lgucircle.activity.EventsActivity;
+import com.codesses.lgucircle.activity.EventAC;
 import com.codesses.lgucircle.activity.IncubationActivity;
 import com.codesses.lgucircle.activity.Services.ServicesActivity;
 import com.codesses.lgucircle.databinding.FragmentExtraBinding;
@@ -92,7 +92,7 @@ public class ExtraFragment extends Fragment {
 
         });
         binding.events.setOnClickListener(v -> {
-           startActivity(new Intent(context, EventsActivity.class));
+           startActivity(new Intent(context, EventAC.class));
 
         });
     }

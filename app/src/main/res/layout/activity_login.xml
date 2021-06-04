@@ -23,30 +23,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.162" />
 
-    <RadioGroup
-        android:id="@+id/radio_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_15sdp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title">
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/user"
-            android:textSize="@dimen/_14ssp" />
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/authority"
-            android:textSize="@dimen/_14ssp" />
-    </RadioGroup>
 
 
     <EditText
@@ -60,7 +36,7 @@
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/radio_group" />
+        app:layout_constraintTop_toBottomOf="@id/title" />
 
     <EditText
         android:id="@+id/login_pass"
@@ -85,7 +61,7 @@
         android:textSize="@dimen/_12ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_pass"
-        android:onClick="forgot_pass"
+        android:onClick="forgotPass"
         />
 
     <Button
@@ -94,6 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_10sdp"
         android:text="@string/login"
+        android:textColor="@color/white"
         app:backgroundTint="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/forgot_pass" />
@@ -106,6 +83,7 @@
         android:layout_margin="@dimen/_10sdp"
         android:text="@string/new_user"
         app:backgroundTint="@color/red"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/forgot_pass" />
 

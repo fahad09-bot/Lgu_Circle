@@ -70,4 +70,22 @@
     <string name="phone_no">Phone No</string>
     <string name="idea_register">Register your Idea</string>
     <string name="sending">Sending</string>
+    <string name="profile">Profile</string>
+    <string name="staff">Staff</string>
+    <string name="not_register_user">user not registered</string>
+    <string name="admin">Admin</string>
+    <string name="date_time">Date time</string>
+    <string name="add_image">Add Image</string>
+    <string name="upload">Upload</string>
+    <string name="cancel">Cancel</string>
+    <string name="pickup_date">Pickup</string>
+    <string name="events">Events</string>
+    <string name="reject">Reject</string>
+    <string name="accept">Accept</string>
+    <string name="_default">default</string>
+    <string name="manual">manual</string>
+    <string name="accept_message">Hope you are doing well. We had go through your idea. Our team selected you for the interview. Kindly concern with the incubation centre.
+    Regards
+    LGU incubator</string>
+    <string name="ideas">Ideas</string>
 </resources>

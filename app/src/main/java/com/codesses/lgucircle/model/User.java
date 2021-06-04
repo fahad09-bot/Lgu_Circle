@@ -5,9 +5,13 @@ public class User {
             email, first_name,
             last_name, password,
             phone, profile_img,
-            u_id, roll_no;
+            u_id, roll_no, type;
 
     public User() {
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getRoll_no() {

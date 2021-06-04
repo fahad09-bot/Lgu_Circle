@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.codesses.lgucircle.Authentication.LoginActivity;
 import com.codesses.lgucircle.Dialogs.ChangePassDialog;
 import com.codesses.lgucircle.R;
+import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.activity.YourprofileActivity;
 import com.codesses.lgucircle.model.User;
@@ -121,7 +122,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.your_profile_cv:
                 intent = new Intent(mContext, YourprofileActivity.class);
-                intent.putExtra("User_Id", FirebaseRef.getUserId());
+                intent.putExtra(Constants.USER_ID, FirebaseRef.getUserId());
                 startActivity(intent);
 
                 break;

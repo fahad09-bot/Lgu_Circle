@@ -64,8 +64,15 @@ public class FirebaseRef {
     public static DatabaseReference getConversationRef() {
         return getDatabaseInstance().child("conversations");
     }
+
+    //    TODO: Get Ideas Reference
     public static DatabaseReference getIdeaRef() {
         return getDatabaseInstance().child("ideas");
+    }
+
+    //    TODO: Get Events Reference
+    public static DatabaseReference getEventRef() {
+        return getDatabaseInstance().child("events");
     }
 
     /****************************
@@ -87,6 +94,11 @@ public class FirebaseRef {
     //    TODO: Get Message Storage Reference
     public static StorageReference getMessageStorage() {
         return getStorageInstance().child("Messages/").child("Images/" + UUID.randomUUID().toString());
+    }
+
+    //    TODO: Get Events Storage Reference
+    public static StorageReference getEventsStorage() {
+        return getStorageInstance().child("Events/").child("Images/" + UUID.randomUUID().toString());
     }
 
 }

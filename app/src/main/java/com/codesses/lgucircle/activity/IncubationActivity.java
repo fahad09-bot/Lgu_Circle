@@ -75,7 +75,9 @@ public class IncubationActivity extends AppCompatActivity {
             ideaMap.put("i_id", pitch_id);
             ideaMap.put("pitched_by", FirebaseRef.getCurrentUserId());
             ideaMap.put("pitch", pitch);
+            ideaMap.put("status", 1);
             FirebaseRef.getIdeaRef().child(pitch_id).push().setValue(ideaMap);
+            binding.pitch.setText("");
 
         }
     }

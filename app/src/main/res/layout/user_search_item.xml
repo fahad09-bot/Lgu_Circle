@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_10sdp"
             android:layout_marginStart="@dimen/_5sdp"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/user_image"
             app:layout_constraintStart_toEndOf="@id/user_image"
@@ -37,6 +37,14 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/_13ssp"
                 android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/type"
+                android:text=" (staff)"
+                android:textSize="@dimen/_9ssp"
+                android:visibility="gone"
+                />
         </LinearLayout>
 
 

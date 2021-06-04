@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        app:cardCornerRadius="@dimen/_10sdp"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_150sdp"
+                android:src="@drawable/download"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/event_info"
+                android:layout_width="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/image"
+                android:text="Event Information"
+                android:layout_marginHorizontal="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/dateTime"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_30sdp"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12ssp"
+                android:background="@drawable/plain_stroke_shape"
+                android:text="5/30/2021 13:30:00"
+                android:layout_marginBottom="@dimen/_5sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/event_info"
+                app:layout_constraintEnd_toStartOf="@id/dep"
+                app:layout_constraintTop_toBottomOf="@id/event_info"
+                android:layout_marginTop="@dimen/_10sdp" />
+
+            <TextView
+                android:id="@+id/dep"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_30sdp"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12ssp"
+                android:background="@drawable/plain_stroke_shape"
+                android:text="Computer Science"
+                android:layout_marginStart="@dimen/_10sdp"
+                app:layout_constraintTop_toTopOf="@id/dateTime"
+                app:layout_constraintBottom_toBottomOf="@id/dateTime"
+                app:layout_constraintStart_toEndOf="@id/dateTime"
+                app:layout_constraintEnd_toEndOf="@id/event_info" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

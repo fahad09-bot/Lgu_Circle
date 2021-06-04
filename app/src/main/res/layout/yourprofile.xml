@@ -40,7 +40,7 @@
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_toRightOf="@+id/back_press"
-                    android:text="@string/your_profile"
+                    android:text="@string/profile"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_16ssp" />
 
@@ -89,22 +89,28 @@
             app:layout_constraintTop_toBottomOf="@id/profile_img" />
 
         <TextView
-            android:id="@+id/game"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
-            android:textColor="@color/red"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@id/name"
-            app:layout_constraintStart_toStartOf="@id/name"
-            app:layout_constraintTop_toBottomOf="@id/name" />
+            android:id="@+id/message"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/name"
+            android:background="@drawable/message_button_shape"
+            android:textSize="@dimen/_15ssp"
+            android:textColor="@color/white"
+            android:text="Message"
+            android:gravity="center"
+            />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:layout_marginTop="@dimen/_5sdp"
             app:layout_constraintBottom_toTopOf="@id/view_pager"
-            app:layout_constraintTop_toBottomOf="@id/game" />
+            app:layout_constraintTop_toBottomOf="@id/message" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/view_pager"

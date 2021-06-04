@@ -21,7 +21,9 @@ import com.codesses.lgucircle.Adapters.ProfilePagerAdapter;
 import com.codesses.lgucircle.Adapters.UserPostAdapter;
 import com.codesses.lgucircle.Adapters.UserTabsAdapter;
 import com.codesses.lgucircle.R;
+import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.activity.Services.ServicesChatAC;
 import com.codesses.lgucircle.databinding.YourprofileBinding;
 import com.codesses.lgucircle.model.Post;
 import com.codesses.lgucircle.model.User;
@@ -29,6 +31,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -45,19 +48,6 @@ public class YourprofileActivity extends AppCompatActivity {
     //    TODO: Context
     AppCompatActivity mContext;
 
-    //    TODO: Widgets
-
-    @BindView(R.id.back_press)
-    ImageView Back_Press;
-    @BindView(R.id.edit_profile)
-    TextView Edit;
-    @BindView(R.id.profile_img)
-    ImageView Profile_Img;
-    @BindView(R.id.name)
-    TextView Name;
-    @BindView(R.id.game)
-    TextView Game;
-
     YourprofileBinding binding;
 
     //  TODO: Variables
@@ -69,12 +59,15 @@ public class YourprofileActivity extends AppCompatActivity {
         mContext = this;
         binding = YourprofileBinding.bind(LayoutInflater.from(mContext).inflate(R.layout.yourprofile, null));
         setContentView(binding.getRoot());
-        ButterKnife.bind(mContext);
 
 
 //        TODO: Get Intent
 //
-        userId = getIntent().getStringExtra("User_Id");
+        userId = getIntent().getStringExtra(Constants.USER_ID);
+        if (userId.equals(FirebaseRef.getUserId()))
+            binding.message.setVisibility(View.GONE);
+        else
+            binding.message.setVisibility(View.VISIBLE);
 
         binding.tabLayout.addTab(binding.tabLayout.newTab().setIcon(R.drawable.ic_post));
         binding.tabLayout.addTab(binding.tabLayout.newTab().setIcon(R.drawable.ic_services));
@@ -82,14 +75,17 @@ public class YourprofileActivity extends AppCompatActivity {
         final ProfilePagerAdapter adapter = new ProfilePagerAdapter(
                 getSupportFragmentManager(),
                 BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
-                binding.tabLayout.getTabCount());
+                binding.tabLayout.getTabCount(), userId);
 
         binding.viewPager.setAdapter(adapter);
+
+        binding.editProfile.setEnabled(false);
+        binding.editProfile.setAlpha(0.5f);
 
         Log.d("UserId", userId);
 
         if (userId.equals(FirebaseRef.getUserId())) {
-            Edit.setVisibility(View.VISIBLE);
+            binding.editProfile.setVisibility(View.VISIBLE);
         }
 
         binding.tabLayout.getTabAt(0).getIcon()
@@ -124,10 +120,13 @@ public class YourprofileActivity extends AppCompatActivity {
 
 
 //        TODO: Click Listeners
-        Back_Press.setOnClickListener(this::backPress);
-        Edit.setOnClickListener(this::openEditProfile);
+        binding.backPress.setOnClickListener(this::backPress);
+        binding.editProfile.setOnClickListener(this::openEditProfile);
+        binding.message.setOnClickListener(this::startChat);
 
     }
+
+
     private void openEditProfile(View view) {
 
         startActivity(new Intent(mContext, EditProfileActivity.class));
@@ -147,8 +146,19 @@ public class YourprofileActivity extends AppCompatActivity {
                         User user = dataSnapshot.getValue(User.class);
 
 
-                        Picasso.get().load(user.getProfile_img()).into(Profile_Img);
-                        Name.setText(user.getFirst_name() + " " + user.getLast_name());
+                        Picasso.get().load(user.getProfile_img()).into(binding.profileImg, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                binding.editProfile.setEnabled(true);
+                                binding.editProfile.setAlpha(1f);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+
+                            }
+                        });
+                        binding.name.setText(user.getFirst_name() + " " + user.getLast_name());
 
 
                     }
@@ -160,6 +170,12 @@ public class YourprofileActivity extends AppCompatActivity {
                 });
 
 
+    }
+
+    private void startChat(View view) {
+        Intent intent = new Intent(mContext, ServicesChatAC.class);
+        intent.putExtra(Constants.USER_ID, userId);
+        startActivity(intent);
     }
 
 

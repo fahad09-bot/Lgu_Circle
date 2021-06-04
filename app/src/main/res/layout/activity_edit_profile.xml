@@ -57,11 +57,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_margin="@dimen/_10sdp"
-                android:drawablePadding="@dimen/_5sdp"
                 android:gravity="center_vertical"
                 android:hint="@string/email"
                 android:padding="@dimen/_5sdp"
-                android:textSize="@dimen/_12ssp"
                 app:layout_constraintTop_toBottomOf="@id/e_lname" />
 
 

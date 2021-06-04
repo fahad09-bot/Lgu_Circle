@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/service_shape"
+        android:padding="@dimen/_10sdp"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        tools:context=".Dialogs.EventsUpload">
+
+        <EditText
+            android:id="@+id/event_info"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200sdp"
+            android:background="@null"
+            android:hint="Event Information"
+            android:textSize="@dimen/_12ssp"
+            android:scrollbars="vertical"
+            android:gravity="start|top"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            app:layout_constraintTop_toBottomOf="@id/event_info"
+            android:id="@+id/view"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:background="@color/Green"
+            />
+
+        <Button
+            android:id="@+id/date_picker"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@color/Green"
+            android:text="@string/date_time"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_11ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/event_info" />
+
+
+        <Spinner
+            android:id="@+id/dep"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_30sdp"
+            android:text="@string/dep"
+            android:textAllCaps="false"
+            android:textColor="@color/Green"
+            android:textSize="@dimen/_11ssp"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintEnd_toStartOf="@id/add_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/date_picker" />
+
+        <Button
+            android:id="@+id/add_image"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:background="@color/Green"
+            android:text="@string/add_image"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/dep"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/dep"
+            app:layout_constraintTop_toTopOf="@id/dep" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_150sdp"
+            app:layout_constraintTop_toBottomOf="@id/dep"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:id="@+id/image"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:contentDescription="@string/content_description" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            app:layout_constraintTop_toBottomOf="@id/image"
+            android:id="@+id/event_upload"
+            android:background="@color/Green"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="@string/upload"
+            android:textAllCaps="false"
+            android:textSize="@dimen/_13ssp"
+            android:textColor="@color/white"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

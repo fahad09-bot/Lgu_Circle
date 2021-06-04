@@ -5,24 +5,25 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.codesses.lgucircle.Adapters.ServicesAdapter;
-import com.codesses.lgucircle.Adapters.UserPostAdapter;
+import com.codesses.lgucircle.Adapters.ServiceAdapter;
 import com.codesses.lgucircle.Interfaces.OnItemClick;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
-import com.codesses.lgucircle.databinding.FragmentUserPostBinding;
 import com.codesses.lgucircle.databinding.FragmentUserServiceBinding;
-import com.codesses.lgucircle.model.Post;
 import com.codesses.lgucircle.model.Service;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 
@@ -45,12 +46,15 @@ public class UserServiceFragment extends Fragment {
     FragmentActivity fragmentActivity;
     LinkedList<Service> servicesList = new LinkedList<>();
 
-    ServicesAdapter servicesAdapter;
+    ServiceAdapter serviceAdapter;
     FragmentUserServiceBinding binding;
 
-//    public UserServiceFragment() {
-//        // Required empty public constructor
-//    }
+    String userId;
+
+    public UserServiceFragment(String userId) {
+        // Required empty public constructor
+        this.userId = userId;
+    }
 //
 //    /**
 //     * Use this factory method to create a new instance of
@@ -87,9 +91,47 @@ public class UserServiceFragment extends Fragment {
         binding = FragmentUserServiceBinding.bind(inflater.inflate(R.layout.fragment_user_service, container, false));
         getServicesData();
 
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder, @NonNull @NotNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                deleteService(position);
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(binding.servicesRecycler);
+
 
         return binding.getRoot();
     }
+
+    private void deleteService(int position) {
+        FirebaseRef
+                .getServiceRef()
+                .child(servicesList.get(position).getS_id())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            Service service = dataSnapshot.getValue(Service.class);
+                            assert service != null;
+                            if (service.getS_id().equals(servicesList.get(position).getS_id()) && service.getPosted_by().equals(FirebaseRef.getUserId())) {
+                                dataSnapshot.getRef().removeValue();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        Log.e("OnCancelled", error.getMessage());
+                    }
+                });
+    }
+
 
     private void getServicesData() {
         FirebaseRef.getServiceRef()
@@ -106,13 +148,13 @@ public class UserServiceFragment extends Fragment {
                             }
                             Log.e("POSTSUSER", String.valueOf(servicesList.size()));
 
-                            servicesAdapter = new ServicesAdapter(fragmentActivity, servicesList, new OnItemClick() {
+                            serviceAdapter = new ServiceAdapter(fragmentActivity, servicesList, new OnItemClick() {
                                 @Override
                                 public void onClick(String id) {
 
                                 }
                             });
-                            binding.servicesRecycler.setAdapter(servicesAdapter);
+                            binding.servicesRecycler.setAdapter(serviceAdapter);
 
                         }
                     }

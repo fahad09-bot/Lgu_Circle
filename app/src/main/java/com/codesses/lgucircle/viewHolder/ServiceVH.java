@@ -19,10 +19,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import io.github.ponnamkarthik.richlinkpreview.ViewListener;
 
-public class ServicesVH extends RecyclerView.ViewHolder {
+public class ServiceVH extends RecyclerView.ViewHolder {
 
     ServicesFeedItemBinding binding;
-    public ServicesVH(@NonNull ServicesFeedItemBinding binding) {
+    public ServiceVH(@NonNull ServicesFeedItemBinding binding) {
         super(binding.getRoot());
         this.binding = binding;
     }

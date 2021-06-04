@@ -3,16 +3,13 @@ package com.codesses.lgucircle.activity.Services;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,31 +20,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.codesses.lgucircle.Adapters.ServicesAdapter;
-import com.codesses.lgucircle.Adapters.UserPostAdapter;
+import com.codesses.lgucircle.Adapters.ServiceAdapter;
 import com.codesses.lgucircle.Dialogs.ProgressDialog;
-import com.codesses.lgucircle.Interfaces.OnItemClick;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.databinding.ActivityServicesBinding;
 import com.codesses.lgucircle.databinding.AddServiceBinding;
-import com.codesses.lgucircle.model.Post;
 import com.codesses.lgucircle.model.Service;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class ServicesActivity extends AppCompatActivity {
@@ -55,7 +41,7 @@ public class ServicesActivity extends AppCompatActivity {
     AppCompatActivity mContext;
     ActivityServicesBinding binding;
     LinkedList<Service> servicesList = new LinkedList<>();
-    ServicesAdapter servicesAdapter;
+    ServiceAdapter serviceAdapter;
 
 
     @Override
@@ -70,54 +56,16 @@ public class ServicesActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         setTitle(R.string.services);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        servicesAdapter = new ServicesAdapter(mContext, servicesList, id -> {
+        serviceAdapter = new ServiceAdapter(mContext, servicesList, id -> {
             Intent intent = new Intent(mContext, ServicesChatAC.class);
             intent.putExtra(Constants.USER_ID, id);
             startActivity(intent);
         });
-        binding.servicesRecycler.setAdapter(servicesAdapter);
+        binding.servicesRecycler.setAdapter(serviceAdapter);
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder, @NonNull @NotNull RecyclerView.ViewHolder target) {
-                return false;
-            }
 
-            @Override
-            public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
-                deleteService(position);
-            }
-        });
-        itemTouchHelper.attachToRecyclerView(binding.servicesRecycler);
 
         getServices();
-    }
-
-    private void deleteService(int position) {
-        FirebaseRef
-                .getServiceRef()
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            Service service = dataSnapshot.getValue(Service.class);
-                            assert service != null;
-                            if (service.getS_id().equals(servicesList.get(position).getS_id())) {
-                                if (service.getPosted_by().equals(FirebaseRef.getCurrentUserId()))
-                                    dataSnapshot.getRef().removeValue();
-                                else
-                                    Toast.makeText(mContext, "You cannot delete this post", Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                        Log.e("OnCancelled", error.getMessage());
-                    }
-                });
     }
 
     private void getServices() {
@@ -130,7 +78,7 @@ public class ServicesActivity extends AppCompatActivity {
                             Service model = dataSnapshot.getValue(Service.class);
                             servicesList.addFirst(model);
                         }
-                        servicesAdapter.notifyDataSetChanged();
+                        serviceAdapter.notifyDataSetChanged();
 
 
                     }

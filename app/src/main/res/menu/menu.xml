@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/eventsNav"
+        android:icon="@drawable/ic_event"
+        android:title="@string/events"
+        />
     <item
-        android:id="@+id/search_bar"
-        android:icon="@drawable/ic_baseline_search_24"
-        android:title="@string/search"
-        app:showAsAction="always"
-        ></item>
-    <item
-android:id="@+id/menu"
-        android:title="@string/bottom_menu"
-android:icon="@drawable/ic_menu"
-        app:showAsAction="always"
-    ></item>
+        android:id="@+id/ideasNav"
+        android:title="@string/ideas"
+        android:icon="@drawable/ic_idea"
+        />
 </menu>

@@ -122,7 +122,7 @@ public class ConversationAC extends AppCompatActivity {
     }
 
     private void createConversation(View view) {
-        UserSearchDialog userSearchDialog = new UserSearchDialog();
+        UserSearchDialog userSearchDialog = new UserSearchDialog("ConversationAC");
         userSearchDialog.show(mContext.getSupportFragmentManager(), "user search");
     }
 

@@ -14,10 +14,12 @@ import org.jetbrains.annotations.NotNull;
 public class ProfilePagerAdapter extends FragmentStatePagerAdapter {
 
     int totalTabs;
+    String userId;
 
-    public ProfilePagerAdapter(@NonNull @NotNull FragmentManager fm, int behavior, int totalTabs) {
+    public ProfilePagerAdapter(@NonNull @NotNull FragmentManager fm, int behavior, int totalTabs, String userId) {
         super(fm, behavior);
         this.totalTabs = totalTabs;
+        this.userId = userId;
     }
 
     @NotNull
@@ -26,10 +28,10 @@ public class ProfilePagerAdapter extends FragmentStatePagerAdapter {
         switch (position)
         {
             case 0:
-                return new UserPostFragment();
+                return new UserPostFragment(userId);
 
             case 1:
-                return new UserServiceFragment();
+                return new UserServiceFragment(userId);
 
             default:
                 return null;
