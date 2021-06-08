@@ -58,9 +58,7 @@
     <string name="edit">Edit</string>
     <string name="intent_open_full_screen_image">Open Image</string>
     <string name="intent_post_user_id">User post ID</string>
-
     <style name="HeadingText">heading Text</style>
-
     <string name="reply_lowercase">Reply in Lowercase</string>
     <string name="post_id">Post Id</string>
     <string name="today">Today</string>
