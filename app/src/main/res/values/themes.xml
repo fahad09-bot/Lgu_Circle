@@ -30,4 +30,19 @@
         parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/service_shape</item>
     </style>
+
+    <style name="MyEventBottomSheet" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/MyEventModalStyle</item>
+
+        <!--        For Android 10 to ownWard navigation button issue -->
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/white</item>
+
+    </style>
+
+    <style name="MyEventModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <!--        <item name="behavior_peekHeight">@dimen/_330sdp</item>-->
+        <item name="android:background">@drawable/service_shape</item>
+    </style>
 </resources>

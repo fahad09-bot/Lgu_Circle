@@ -13,7 +13,7 @@
             android:id="@+id/card"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:cardBackgroundColor="@color/Green"
+            android:background="@drawable/gradient_shape"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.Toolbar
@@ -30,6 +30,14 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_15ssp"
                     android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/logout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="@dimen/_20sdp"
+                    android:src="@drawable/ic_logout" />
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -37,22 +45,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingBottom="?attr/actionBarSize"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            >
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragment"
                 android:name="androidx.navigation.fragment.NavHostFragment"
-                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:defaultNavHost="true"
+                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:navGraph="@navigation/mobile_navigation" />
-
-
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -67,8 +73,7 @@
             app:elevation="0dp"
             app:itemIconTint="@drawable/bottom_nav_color"
             app:itemTextColor="@drawable/bottom_nav_color"
-            app:menu="@menu/menu"
-            />
+            app:menu="@menu/menu" />
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

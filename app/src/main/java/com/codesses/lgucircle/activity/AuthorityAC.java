@@ -2,26 +2,39 @@ package com.codesses.lgucircle.activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.codesses.lgucircle.Adapters.AuthorityPagerAdapter;
 import com.codesses.lgucircle.Adapters.ProfilePagerAdapter;
+import com.codesses.lgucircle.Authentication.LoginActivity;
 import com.codesses.lgucircle.R;
+import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.databinding.ActivityAuthorityBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.function.Consumer;
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
@@ -47,19 +60,30 @@ public class AuthorityAC extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.bottomNav, navController);
 
         setBottomNavigationListener();
-        setDestinationListener();
+
+        binding.logout.setOnClickListener(this::logout);
+
+//        setDestinationListener();
+    }
+
+    private void logout(View view) {
+        FirebaseRef.getAuth().signOut();
+        Intent intent = new Intent(mContext, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void setDestinationListener() {
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
-            public void onDestinationChanged(@NonNull @NotNull NavController controller, @NonNull @NotNull NavDestination destination, @Nullable @org.jetbrains.annotations.Nullable Bundle arguments) {
+            public void onDestinationChanged(@NonNull @NotNull NavController controller, @NonNull @NotNull NavDestination destination, @Nullable Bundle arguments) {
                 switch (destination.getId())
                 {
-                    case R.id.eventsFragment:
+                    case R.id.eventsNav:
                         binding.bottomNav.getMenu().findItem(R.id.eventsNav).setChecked(true);
                         break;
-                    case R.id.ideasFragment:
+                    case R.id.ideasNav:
                         binding.bottomNav.getMenu().findItem(R.id.ideasNav).setChecked(true);
                         break;
                 }
@@ -69,20 +93,31 @@ public class AuthorityAC extends AppCompatActivity {
 
     private void setBottomNavigationListener() {
         binding.bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
                 switch (item.getItemId())
                 {
                     case R.id.eventsNav:
-                        navController.navigate(R.id.eventsFragment);
+                        setFragment(R.id.eventsNav);
                         break;
                     case R.id.ideasNav:
-                        navController.navigate(R.id.ideasFragment);
+                        setFragment(R.id.ideasNav);
                         break;
                 }
                 return false;
             }
         });
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void setFragment(int id) {
+
+
+        navController.navigate(id, null, new NavOptions.Builder()
+                .setPopUpTo(id,
+                        true).build());
+
     }
 
     @Override

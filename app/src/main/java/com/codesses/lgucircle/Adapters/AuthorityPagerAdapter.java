@@ -3,13 +3,9 @@ package com.codesses.lgucircle.Adapters;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.codesses.lgucircle.Fragments.Authority.EventsFragment;
 import com.codesses.lgucircle.Fragments.Authority.IdeaStatusFragment;
-import com.codesses.lgucircle.Fragments.Authority.IdeasFragment;
 
 import org.jetbrains.annotations.NotNull;
 

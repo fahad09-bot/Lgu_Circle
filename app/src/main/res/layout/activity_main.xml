@@ -8,6 +8,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
+        android:background="@drawable/gradient_shape"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -20,7 +21,6 @@
                 android:id="@+id/card"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/Green"
                 app:layout_scrollFlags="scroll|enterAlways">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -44,8 +44,9 @@
                         android:id="@+id/message"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_10sdp"
-                        android:src="@drawable/ic_message"
+                        android:layout_marginEnd="@dimen/_15sdp"
+                        android:src="@drawable/ic_messenger"
+                        android:foregroundGravity="center_vertical"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -55,7 +56,7 @@
                         android:id="@+id/search"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
                         android:src="@drawable/ic_baseline_search_24"
                         app:layout_constraintBottom_toBottomOf="@id/message"
                         app:layout_constraintEnd_toStartOf="@id/message"

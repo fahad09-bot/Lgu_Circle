@@ -12,6 +12,9 @@ import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class EventVH extends RecyclerView.ViewHolder {
 
     EventsItemLayoutBinding binding;
@@ -30,12 +33,18 @@ public class EventVH extends RecyclerView.ViewHolder {
             binding.image.setVisibility(View.VISIBLE);
             Picasso.get().load(event.getImage()).resize(500, 500).into(binding.image);
         }
-
+        binding.eventName.setText(event.getName());
         binding.eventInfo.setText(event.getInfo());
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MM");
+        String month = monthFormat.format(Date.parse(event.getDate()));
+        String day = new SimpleDateFormat("dd").format(Date.parse(event.getDate()));
+        String dayTime = new SimpleDateFormat("EE hh:mm aa").format(Date.parse(event.getDate()));
+        binding.month.setText(month);
+        binding.day.setText(day);
 
-        binding.dateTime.setText(event.getDate());
+        binding.dayTime.setText(dayTime);
 
-        binding.dep.setText(event.getDepartment());
+        binding.department.setText(event.getDepartment());
 
         binding.image.setOnClickListener(new View.OnClickListener() {
             @Override

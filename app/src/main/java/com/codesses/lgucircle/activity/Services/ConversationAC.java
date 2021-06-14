@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.codesses.lgucircle.Adapters.ConversationAdapter;
 import com.codesses.lgucircle.Dialogs.UserSearchDialog;
@@ -21,6 +22,8 @@ import com.codesses.lgucircle.databinding.ActivityConversationBinding;
 import com.codesses.lgucircle.model.Chat;
 import com.codesses.lgucircle.model.ChatList;
 import com.codesses.lgucircle.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -62,6 +65,7 @@ public class ConversationAC extends AppCompatActivity {
 
         getConversationList();
     }
+
     private void setAdapter() {
         adapter = new ConversationAdapter(userList, mContext, userId -> {
             Intent intent = new Intent(mContext, ServicesChatAC.class);
@@ -102,8 +106,7 @@ public class ConversationAC extends AppCompatActivity {
                         userList.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                             User user = dataSnapshot.getValue(User.class);
-                            for (ChatList chatList: chatLists)
-                            {
+                            for (ChatList chatList : chatLists) {
                                 if (user.getU_id().equals(chatList.getId())) {
                                     userList.add(user);
                                 }
@@ -130,42 +133,28 @@ public class ConversationAC extends AppCompatActivity {
         FirebaseRef.getConversationRef()
                 .child(FirebaseRef.getCurrentUserId())
                 .child(userList.get(position).getU_id())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        for (DataSnapshot dataSnapshot: snapshot.getChildren())
-                        {
-                            dataSnapshot.getRef().removeValue();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                        Log.e("onCancelled", error.getMessage());
-                    }
-                });
+                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(mContext, "Successfully deleted", Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         FirebaseRef.getMessageRef()
                 .child(FirebaseRef.getCurrentUserId())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        for (DataSnapshot dataSnapshot: snapshot.getChildren())
-                        {
-                            Chat chat = dataSnapshot.getValue(Chat.class);
-                            if (chat.getReceiver_id().equals(FirebaseRef.getUserId()) && chat.getSender_id().equals(userList.get(position).getU_id()) ||
-                                    chat.getReceiver_id().equals(userList.get(position).getU_id()) && chat.getSender_id().equals(FirebaseRef.getCurrentUserId()))
-                            {
-                                dataSnapshot.getRef().removeValue();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                        Log.e("onCancelled", error.getMessage());
-                    }
-                });
+                .child(FirebaseRef.getCurrentUserId() + userList.get(position).getU_id())
+                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull @NotNull Task<Void> task) {
+                if (task.isSuccessful())
+                    Toast.makeText(mContext, "Successfully deleted", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

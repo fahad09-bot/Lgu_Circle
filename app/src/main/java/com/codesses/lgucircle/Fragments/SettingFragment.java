@@ -23,6 +23,8 @@ import com.codesses.lgucircle.Dialogs.ChangePassDialog;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.activity.IncubationActivity;
+import com.codesses.lgucircle.activity.Services.ServicesActivity;
 import com.codesses.lgucircle.activity.YourprofileActivity;
 import com.codesses.lgucircle.model.User;
 import com.google.firebase.auth.AuthCredential;
@@ -61,6 +63,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     CardView About_Cv;
     @BindView(R.id.sign_out_cv)
     CardView Sign_Out_Cv;
+    @BindView(R.id.incubation_cv)
+    CardView Incubation_Cv;
+    @BindView(R.id.freelance_cv)
+    CardView Freelance_Cv;
 
 
     private Intent intent;
@@ -111,6 +117,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         Contact_Us_Cv.setOnClickListener(this);
         About_Cv.setOnClickListener(this);
         Sign_Out_Cv.setOnClickListener(this);
+        Incubation_Cv.setOnClickListener(this);
+        Freelance_Cv.setOnClickListener(this);
 
 
         return view;
@@ -124,33 +132,36 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 intent = new Intent(mContext, YourprofileActivity.class);
                 intent.putExtra(Constants.USER_ID, FirebaseRef.getUserId());
                 startActivity(intent);
-
                 break;
+
             case R.id.change_pass_cv:
-
                 openChangePassDialog();
-
                 break;
+
             case R.id.contact_us_cv:
-
                 Toast.makeText(getActivity(), "Coming Soon", Toast.LENGTH_SHORT).show();
-
                 break;
 
             case R.id.about_cv:
-
                 Toast.makeText(getActivity(), "Coming Soon", Toast.LENGTH_SHORT).show();
-
                 break;
+
             case R.id.sign_out_cv:
-
                 FirebaseRef.getAuth().signOut();
-
                 intent = new Intent(getActivity(), LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 getActivity().finish();
                 startActivity(intent);
+                break;
 
+            case R.id.incubation_cv:
+                intent = new Intent(mContext, IncubationActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.freelance_cv:
+                intent = new Intent(mContext, ServicesActivity.class);
+                startActivity(intent);
                 break;
         }
     }

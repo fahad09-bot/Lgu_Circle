@@ -22,4 +22,6 @@
     <color name="imageBorderColor">#E01E7A</color>
     <color name="miniTitle">#2A2E43</color>
     <color name="grey">#979696</color>
+    <color name="dim_grey">#616f76</color>
+    <color name="light_grey">#707070</color>
 </resources>

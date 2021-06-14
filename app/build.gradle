@@ -73,8 +73,10 @@ dependencies {
 //Glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
-    //Android Paging Library
-    implementation "android.arch.paging:runtime:1.0.1"
+
+    def paging_version = "3.0.0"
+
+    implementation "androidx.paging:paging-runtime:$paging_version"
 
     //Firebase Pagination Library
     implementation 'com.shreyaspatil:FirebaseRecyclerPagination:1.0.1'

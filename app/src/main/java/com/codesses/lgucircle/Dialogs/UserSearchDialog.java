@@ -49,7 +49,7 @@ public class UserSearchDialog extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentActivity = getActivity();
-        setStyle(STYLE_NORMAL, R.style.FullScreenBottomSheetDialog);
+        setStyle(STYLE_NORMAL, R.style.MyEventBottomSheet);
     }
 
     @Override

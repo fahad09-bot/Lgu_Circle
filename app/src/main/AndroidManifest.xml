@@ -15,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LguCircle">
-        <activity android:name=".activity.EventAC"></activity>
         <activity android:name=".activity.AuthorityAC"></activity>
         <activity android:name=".activity.Services.ConversationAC" />
         <activity android:name=".activity.Services.ServicesChatAC" />

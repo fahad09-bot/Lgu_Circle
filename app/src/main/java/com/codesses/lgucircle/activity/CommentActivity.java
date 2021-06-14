@@ -6,6 +6,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -37,6 +39,8 @@ import com.shreyaspatil.firebase.recyclerpagination.FirebaseRecyclerPagingAdapte
 import com.shreyaspatil.firebase.recyclerpagination.LoadingState;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,9 +62,10 @@ public class CommentActivity extends AppCompatActivity {
 
     //    Firebase paging adapter
     private DatabaseReference postIdRef;
-    private PagedList.Config config;
-    private FirebaseRecyclerPagingAdapter<Comment, CommentViewHolder> mAdapter;
-    private DatabasePagingOptions<Comment> options;
+    RecyclerView recyclerView;
+    Adapter mAdapter;
+    List<Comment> commentList = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +76,7 @@ public class CommentActivity extends AppCompatActivity {
 
 //        TODO: Getting intent & show full screen image
         postId = getIntent().getStringExtra(getString(R.string.post_id));
+        getOpinions();
 
         /****************
          * Click listener
@@ -87,21 +93,9 @@ public class CommentActivity extends AppCompatActivity {
         binding.recyclerView.setHasFixedSize(true);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
-        binding.swipeRefreshLayout.setOnRefreshListener(() -> mAdapter.refresh());
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> mAdapter.notifyDataSetChanged());
 
-        postIdRef = FirebaseRef.getCommentRef().child(postId);
-        config = new PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
-                .setPrefetchDistance(5)
-                .setPageSize(10)
-                .build();
 
-        options = new DatabasePagingOptions.Builder<Comment>()
-                .setLifecycleOwner(this)
-                .setQuery(postIdRef, config, Comment.class)
-                .build();
-
-        getOpinions();
 
 
         /**********************
@@ -117,7 +111,7 @@ public class CommentActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 opinion = s.toString();
                 if (!TextUtils.isEmpty(opinion)) {
-                    binding.sendOpinion.setColorFilter(getResources().getColor(R.color.black));
+                    binding.sendOpinion.setColorFilter(getResources().getColor(R.color.Green));
                 } else {
                     binding.sendOpinion.setColorFilter(getResources().getColor(R.color.Light_grey));
 
@@ -144,7 +138,7 @@ public class CommentActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 reply = s.toString();
                 if (!TextUtils.isEmpty(reply)) {
-                    binding.sendReply.setColorFilter(getResources().getColor(R.color.black));
+                    binding.sendReply.setColorFilter(getResources().getColor(R.color.Green));
                 } else {
                     binding.sendReply.setColorFilter(getResources().getColor(R.color.Light_grey));
 
@@ -159,11 +153,9 @@ public class CommentActivity extends AppCompatActivity {
         });
     }
 
-
     @Override
     protected void onStop() {
         super.onStop();
-        mAdapter.stopListening();
     }
 
     private void onBackPressed(View view) {
@@ -179,101 +171,26 @@ public class CommentActivity extends AppCompatActivity {
      * Manage Opinions
      */
     private void getOpinions() {
-
-        /**********************************
-         * open reply box by click on reply
-         */
-        OnReplyClick onReplyClick = (reply, opinionId) -> {
-            if (true) {
-                binding.opinionBoxLayout.setVisibility(View.GONE);
-                binding.replyBoxLayout.setVisibility(View.VISIBLE);
-                selectedOpinionId = opinionId;
-
-            }
-        };
-
-
-        /**********
-         * Adapter
-         */
-        mAdapter = new FirebaseRecyclerPagingAdapter<Comment, CommentViewHolder>(options) {
-            RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
-
-            @NonNull
+        postIdRef = FirebaseRef.getCommentRef().child(postId);
+        postIdRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                CommentsItemLayoutBinding binding = DataBindingUtil.inflate(
-                        LayoutInflater.from(mContext), R.layout.comments_item_layout, parent, false);
-                return new CommentViewHolder(binding);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull CommentViewHolder holder,
-                                            int position,
-                                            @NonNull Comment model) {
-                holder.bind(mContext, model, onReplyClick);
-
-                List<OpinionReply> repliesList = new ArrayList<>();
-                postIdRef.child(model.getC_id()).child(mContext.getString(R.string.reply_lowercase))
-                        .addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                repliesList.clear();
-                                if (dataSnapshot.exists()) {
-                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                        OpinionReply model = snapshot.getValue(OpinionReply.class);
-                                        repliesList.add(model);
-
-                                    }
-
-                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, RecyclerView.VERTICAL, false);
-                                    linearLayoutManager.setInitialPrefetchItemCount(repliesList.size());
-                                    ReplyAdapter adapter = new ReplyAdapter(mContext, repliesList);
-                                    holder.replyRecyclerView.setLayoutManager(linearLayoutManager);
-                                    holder.replyRecyclerView.setAdapter(adapter);
-                                    holder.replyRecyclerView.setRecycledViewPool(recycledViewPool);
-
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
-
-            }
-
-            @Override
-            protected void onLoadingStateChanged(@NonNull LoadingState state) {
-                switch (state) {
-                    case LOADING_INITIAL:
-                    case LOADING_MORE:
-                        // Do your loading animation
-                        binding.swipeRefreshLayout.setRefreshing(true);
-                        break;
-
-                    case LOADED:
-                        // Stop Animation
-                        binding.swipeRefreshLayout.setRefreshing(false);
-                        break;
-
-                    case FINISHED:
-                        //Reached end of Data set
-                        binding.swipeRefreshLayout.setRefreshing(false);
-                        break;
-
-                    case ERROR:
-//                        retry();
-                        break;
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    commentList.clear();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        commentList.add(dataSnapshot.getValue(Comment.class));
+                    }
+                    setAdapter();
                 }
             }
 
-        };
-        mAdapter.startListening();
-        binding.recyclerView.setAdapter(mAdapter);
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
     }
+
 
     private void postOpinion(View view) {
         if (!TextUtils.isEmpty(opinion)) {
@@ -361,9 +278,78 @@ public class CommentActivity extends AppCompatActivity {
         }
     }
 
-    private void getReplies(String oId, String postId, CommentViewHolder holder, RecyclerView.RecycledViewPool recycledViewPool) {
+    private void setAdapter() {
+        /**********************************
+         * open reply box by click on reply
+         */
+        OnReplyClick onReplyClick = (reply, opinionId) -> {
+            if (true) {
+                binding.opinionBoxLayout.setVisibility(View.GONE);
+                binding.replyBoxLayout.setVisibility(View.VISIBLE);
+                selectedOpinionId = opinionId;
+
+            }
+        };
 
 
+        /**********
+         * Adapter
+         */
+        mAdapter = new RecyclerView.Adapter<CommentViewHolder>() {
+            final RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
+
+            @NonNull
+            @Override
+            public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                CommentsItemLayoutBinding binding = DataBindingUtil.inflate(
+                        LayoutInflater.from(mContext), R.layout.comments_item_layout, parent, false);
+                return new CommentViewHolder(binding);
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull @NotNull CommentViewHolder holder, int position) {
+
+                holder.bind(mContext, commentList.get(position), onReplyClick);
+
+                List<OpinionReply> repliesList = new ArrayList<>();
+                postIdRef.child(commentList.get(position).getC_id()).child(mContext.getString(R.string.reply_lowercase))
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                repliesList.clear();
+                                if (dataSnapshot.exists()) {
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        OpinionReply model = snapshot.getValue(OpinionReply.class);
+                                        repliesList.add(model);
+
+                                    }
+
+                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, RecyclerView.VERTICAL, false);
+                                    linearLayoutManager.setInitialPrefetchItemCount(repliesList.size());
+                                    ReplyAdapter adapter = new ReplyAdapter(mContext, repliesList);
+                                    holder.replyRecyclerView.setLayoutManager(linearLayoutManager);
+                                    holder.replyRecyclerView.setAdapter(adapter);
+                                    holder.replyRecyclerView.setRecycledViewPool(recycledViewPool);
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+            }
+
+            @Override
+            public int getItemCount() {
+                return commentList.size();
+            }
+
+
+        };
+        binding.recyclerView.setAdapter(mAdapter);
     }
+
 
 }

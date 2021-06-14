@@ -33,8 +33,7 @@ public class ConversationVH extends RecyclerView.ViewHolder {
         if (user.getType().equals("staff")) {
             userItemBinding.type.setText(" (" + user.getType() + ")");
             userItemBinding.type.setVisibility(View.VISIBLE);
-        }else
-        {
+        } else {
             userItemBinding.type.setVisibility(View.GONE);
         }
         Picasso.get().load(user.getProfile_img()).into(userItemBinding.userImage);
@@ -44,41 +43,46 @@ public class ConversationVH extends RecyclerView.ViewHolder {
 
     private void getLastMessage(User user) {
         theLastMessage = "default";
-        FirebaseRef.getMessageRef().child(FirebaseRef.getCurrentUserId()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        FirebaseRef.getMessageRef()
+                .child(FirebaseRef.getCurrentUserId())
+                .child(FirebaseRef.getCurrentUserId() + user.getU_id())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                Chat chat = snapshot.getValue(Chat.class);
+                                if (FirebaseRef.getCurrentUser() != null && chat != null) {
+                                    if (chat.getType() == 0 || chat.getType() == 2) {
+                                        theLastMessage = chat.getMessage();
+                                        userItemBinding.lastMessage.setVisibility(View.VISIBLE);
+                                        userItemBinding.lastMessageImage.setVisibility(View.GONE);
+                                        userItemBinding.lastMessage.setText(theLastMessage);
+                                    } else if (chat.getType() == 1) {
+                                        userItemBinding.lastMessageImage.setVisibility(View.VISIBLE);
+                                        userItemBinding.lastMessage.setVisibility(View.GONE);
+                                    } else {
+                                        userItemBinding.lastMessageImage.setVisibility(View.GONE);
+                                        userItemBinding.lastMessage.setVisibility(View.VISIBLE);
+                                        userItemBinding.lastMessage.setText("No message");
+                                    }
+                                }
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Chat chat = snapshot.getValue(Chat.class);
-                    if (FirebaseRef.getCurrentUser() != null && chat != null) {
-                        if (chat.getReceiver_id().equals(FirebaseRef.getUserId()) && chat.getSender_id().equals(user.getU_id()) ||
-                                chat.getReceiver_id().equals(user.getU_id()) && chat.getSender_id().equals(FirebaseRef.getUserId())) {
-                            if (chat.getType() == 0 || chat.getType() == 2) {
-                                theLastMessage = chat.getMessage();
-                                userItemBinding.lastMessage.setVisibility(View.VISIBLE);
-                                userItemBinding.lastMessageImage.setVisibility(View.GONE);
-                                userItemBinding.lastMessage.setText(theLastMessage);
-                            } else if (chat.getType() == 1) {
-                                userItemBinding.lastMessageImage.setVisibility(View.VISIBLE);
-                                userItemBinding.lastMessage.setVisibility(View.GONE);
                             }
                         } else {
                             userItemBinding.lastMessageImage.setVisibility(View.GONE);
                             userItemBinding.lastMessage.setVisibility(View.VISIBLE);
                             userItemBinding.lastMessage.setText("No message");
                         }
+
+
                     }
 
-                }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+                    }
+                });
 
     }
 

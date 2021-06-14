@@ -131,7 +131,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void dataSaveToFirebase(String email, String pass, String f_name, String l_name, String dep, String dob, String phone, @Nullable String roll_no) {
-        String userId = FirebaseRef.getCurrentUserId();
+        String userId = FirebaseRef.getUserId();
 
         Map<String, Object> map = new HashMap<>();
 

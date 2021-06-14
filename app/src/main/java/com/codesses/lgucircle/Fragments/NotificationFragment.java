@@ -1,6 +1,5 @@
 package com.codesses.lgucircle.Fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,19 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.codesses.lgucircle.R;
-import com.codesses.lgucircle.activity.EventAC;
-import com.codesses.lgucircle.activity.IncubationActivity;
-import com.codesses.lgucircle.activity.Services.ServicesActivity;
-import com.codesses.lgucircle.databinding.FragmentExtraBinding;
+import com.codesses.lgucircle.databinding.FragmentNotificationBinding;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ExtraFragment#newInstance} factory method to
+ * Use the {@link NotificationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ExtraFragment extends Fragment {
+public class NotificationFragment extends Fragment {
     FragmentActivity context;
-    private FragmentExtraBinding binding;
+    private FragmentNotificationBinding binding;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -38,7 +34,7 @@ public class ExtraFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public ExtraFragment() {
+    public NotificationFragment() {
         // Required empty public constructor
     }
 
@@ -51,8 +47,8 @@ public class ExtraFragment extends Fragment {
      * @return A new instance of fragment SearchFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ExtraFragment newInstance(String param1, String param2) {
-        ExtraFragment fragment = new ExtraFragment();
+    public static NotificationFragment newInstance(String param1, String param2) {
+        NotificationFragment fragment = new NotificationFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -75,25 +71,12 @@ public class ExtraFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_extra, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_notification, container, false);
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        binding.services.setOnClickListener(v -> {
-            startActivity(new Intent(context, ServicesActivity.class));
-
-        });
-        binding.incubation.setOnClickListener(v -> {
-            startActivity(new Intent(context, IncubationActivity.class));
-
-        });
-        binding.events.setOnClickListener(v -> {
-           startActivity(new Intent(context, EventAC.class));
-
-        });
     }
 }

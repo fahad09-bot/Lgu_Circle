@@ -7,7 +7,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.codesses.lgucircle.Fragments.ExtraFragment;
+import com.codesses.lgucircle.Fragments.EventsFragment;
+import com.codesses.lgucircle.Fragments.NotificationFragment;
 import com.codesses.lgucircle.Fragments.PostFeedFragment;
 import com.codesses.lgucircle.Fragments.SettingFragment;
 
@@ -21,9 +22,6 @@ public class UserTabsAdapter extends FragmentPagerAdapter {
         this.totalTabs = totalTabs;
     }
 
-    public UserTabsAdapter(@NonNull FragmentManager fm, int behavior) {
-        super(fm, behavior);
-    }
 
     @Override
     public Fragment getItem(int position) {
@@ -31,8 +29,10 @@ public class UserTabsAdapter extends FragmentPagerAdapter {
             case 0:
                 return new PostFeedFragment();
             case 1:
-                return new ExtraFragment();
+                return new EventsFragment();
             case 2:
+                return new NotificationFragment();
+            case 3:
                 return new SettingFragment();
             default:
                 return null;

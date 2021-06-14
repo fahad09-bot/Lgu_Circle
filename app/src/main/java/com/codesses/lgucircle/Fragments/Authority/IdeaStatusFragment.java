@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class IdeaStatusFragment extends Fragment {
@@ -85,7 +86,7 @@ public class IdeaStatusFragment extends Fragment {
     }
 
     private void updateStatus(String id, int position, int status, int type) {
-        HashMap<String, Object> hashMap = new HashMap<>();
+        Map<String, Object> hashMap = new HashMap<>();
         hashMap.put("status", status);
         String i_id = ideaList.get(position).getI_id();
         FirebaseRef.getIdeaRef()

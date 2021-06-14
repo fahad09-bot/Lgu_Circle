@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_5sdp"
@@ -44,7 +45,7 @@
             android:paddingEnd="@dimen/_10sdp"
             android:paddingBottom="@dimen/_5sdp"
             android:text="Fahad"
-            android:textColor="@color/Light_grey"
+            android:textColor="@color/black"
             android:textIsSelectable="true"
             android:textSize="@dimen/_11ssp"
             app:layout_constraintStart_toStartOf="@id/username"
@@ -55,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Thur 15 Mar 21"
-            android:textColor="@color/Green"
+            android:textColor="@color/Light_grey"
             android:textSize="@dimen/_8ssp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/reply_time"
@@ -68,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_2sdp"
             android:text="11:12 pm"
-            android:textColor="@color/Green"
+            android:textColor="@color/Light_grey"
             android:textSize="@dimen/_8ssp"
             app:layout_constraintEnd_toEndOf="@id/reply_date"
             app:layout_constraintTop_toBottomOf="@+id/reply_date" />

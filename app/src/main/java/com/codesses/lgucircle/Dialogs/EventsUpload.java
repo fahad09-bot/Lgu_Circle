@@ -21,12 +21,14 @@ import android.widget.ArrayAdapter;
 
 import android.widget.Toast;
 
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.codesses.lgucircle.R;
@@ -46,13 +48,12 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 
-public class EventsUpload extends BottomSheetDialogFragment {
+public class EventsUpload extends DialogFragment {
 
     FragmentEventsUploadBinding binding;
     FragmentActivity fragmentActivity;
@@ -67,6 +68,7 @@ public class EventsUpload extends BottomSheetDialogFragment {
     public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prepareSpinnerList();
+        setStyle(STYLE_NORMAL, R.style.MyEventBottomSheet);
     }
 
     private void prepareSpinnerList() {
@@ -85,10 +87,10 @@ public class EventsUpload extends BottomSheetDialogFragment {
         binding = FragmentEventsUploadBinding.
                 bind(inflater
                         .inflate(
-                        R.layout
-                                .fragment_events_upload,
-                        container,
-                        false));
+                                R.layout
+                                        .fragment_events_upload,
+                                container,
+                                false));
 
         // Inflate the layout for this fragment
 
@@ -115,6 +117,11 @@ public class EventsUpload extends BottomSheetDialogFragment {
 
         binding.eventUpload.setOnClickListener(this::createEvent);
 
+        setTextChangeListeners();
+        return binding.getRoot();
+    }
+
+    private void setTextChangeListeners() {
         binding.eventInfo.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -123,7 +130,7 @@ public class EventsUpload extends BottomSheetDialogFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().length()>0)
+                if (s.toString().length() > 0)
                     binding.eventInfo.setError(null);
             }
 
@@ -132,9 +139,25 @@ public class EventsUpload extends BottomSheetDialogFragment {
 
             }
         });
-        return binding.getRoot();
-    }
 
+        binding.eventName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().length()>0)
+                    binding.eventName.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
 
 
     private void showDatePicker(View view) {
@@ -236,21 +259,17 @@ public class EventsUpload extends BottomSheetDialogFragment {
     private void createEvent(View view) {
 
         String eventInfo = binding.eventInfo.getText().toString().trim();
-
+        String eventName = binding.eventName.getText().toString().trim();
+        if (TextUtils.isEmpty(eventName))
+            binding.eventName.setError("Please provide event name");
         if (TextUtils.isEmpty(eventInfo))
-        {
             binding.eventInfo.setError("Please provide event info");
-        } else if (TextUtils.isEmpty(dateTime))
-        {
+        else if (TextUtils.isEmpty(dateTime))
             binding.datePicker.setError("Please select date time");
-        }
         else if (TextUtils.equals(selectedDepartment, "Select department"))
-        {
             Toast.makeText(fragmentActivity, "Please select department", Toast.LENGTH_SHORT).show();
-        } else if (stringImageUri.isEmpty())
-        {
+        else if (stringImageUri.isEmpty())
             uploadWithoutImage();
-        }
         else
             uploadWithImage();
     }
@@ -297,6 +316,7 @@ public class EventsUpload extends BottomSheetDialogFragment {
         HashMap<String, Object> hashMap = new HashMap<>();
         String event_id = FirebaseRef.getEventRef().push().getKey();
         hashMap.put("e_id", event_id);
+        hashMap.put("name", binding.eventName.getText().toString());
         hashMap.put("info", binding.eventInfo.getText().toString());
         hashMap.put("date", dateTime);
         hashMap.put("department", selectedDepartment);
@@ -317,6 +337,7 @@ public class EventsUpload extends BottomSheetDialogFragment {
         HashMap<String, Object> hashMap = new HashMap<>();
         String event_id = FirebaseRef.getEventRef().push().getKey();
         hashMap.put("e_id", event_id);
+        hashMap.put("name", binding.eventName.getText().toString());
         hashMap.put("info", binding.eventInfo.getText().toString());
         hashMap.put("date", dateTime);
         hashMap.put("department", selectedDepartment);

@@ -15,9 +15,14 @@ import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.databinding.IncubationBinding;
 import com.codesses.lgucircle.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -25,7 +30,7 @@ import java.util.HashMap;
 public class IncubationActivity extends AppCompatActivity {
     AppCompatActivity mContext;
 
-    private IncubationBinding binding;
+    IncubationBinding binding;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,9 +38,11 @@ public class IncubationActivity extends AppCompatActivity {
         mContext = this;
         binding = DataBindingUtil.setContentView(mContext, R.layout.incubation);
 
-//        Get current user data
-
+        //  TODO: Click Listeners
+        binding.btnBack.setOnClickListener(v -> onBackPressed());
         binding.register.setOnClickListener(this::registerIdea);
+
+        //  TODO: Get current user data
         getCurrentUserData();
     }
 
@@ -68,16 +75,27 @@ public class IncubationActivity extends AppCompatActivity {
 
         String pitch = binding.pitch.getText().toString();
 
-        if (!TextUtils.isEmpty(pitch))
-        {
+        if (!TextUtils.isEmpty(pitch)) {
             String pitch_id = FirebaseRef.getIdeaRef().push().getKey();
             HashMap<String, Object> ideaMap = new HashMap<>();
             ideaMap.put("i_id", pitch_id);
             ideaMap.put("pitched_by", FirebaseRef.getCurrentUserId());
             ideaMap.put("pitch", pitch);
             ideaMap.put("status", 1);
-            FirebaseRef.getIdeaRef().child(pitch_id).push().setValue(ideaMap);
-            binding.pitch.setText("");
+            FirebaseRef.getIdeaRef().child(pitch_id)
+                    .updateChildren(ideaMap)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull @NotNull Task<Void> task) {
+                            binding.pitch.setText("");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull @NotNull Exception e) {
+                            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
         }
     }

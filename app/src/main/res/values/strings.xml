@@ -66,7 +66,7 @@
     <string name="bottom_menu">Bottom Sheet</string>
     <string name="update">Update</string>
     <string name="phone_no">Phone No</string>
-    <string name="idea_register">Register your Idea</string>
+    <string name="idea_register">Register your idea</string>
     <string name="sending">Sending</string>
     <string name="profile">Profile</string>
     <string name="staff">Staff</string>
@@ -86,4 +86,6 @@
     Regards
     LGU incubator</string>
     <string name="ideas">Ideas</string>
+    <string name="idea_registration">Idea Registration</string>
+    <string name="garrisonian_services">Garrisonian Services</string>
 </resources>

@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:background="@color/white"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:src="@drawable/ic_vector_back_arrow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/Green" />
+
 
         <TextView
             android:id="@+id/register_idea"
@@ -15,108 +30,179 @@
             android:textColor="@color/black"
             android:textSize="30sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.04" />
+            app:layout_constraintTop_toBottomOf="@id/btn_back" />
 
         <TextView
-            android:id="@+id/i_name"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_30sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:background="@drawable/green_round_corner_square"
-            android:hint="Name"
-            android:inputType="textPersonName"
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginHorizontal="@dimen/_30sdp"
+            android:text="Name"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/register_idea" />
 
         <TextView
-            android:id="@+id/i_email"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_30sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
+            android:id="@+id/i_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:hint="Name"
             android:background="@drawable/green_round_corner_square"
-            android:hint="Email"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="@+id/tv_name"
+            app:layout_constraintStart_toStartOf="@+id/tv_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_name" />
+
+        <TextView
+            android:id="@+id/tv_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Email"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tv_name"
             app:layout_constraintTop_toBottomOf="@id/i_name" />
 
         <TextView
-            android:id="@+id/i_phone_no"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_30sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
+            android:id="@+id/i_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:hint="Email"
             android:background="@drawable/green_round_corner_square"
-            android:hint="Phone Number"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="@+id/i_name"
+            app:layout_constraintStart_toStartOf="@+id/tv_email"
+            app:layout_constraintTop_toBottomOf="@id/tv_email" />
+
+        <TextView
+            android:id="@+id/tv_phone_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Phone Number"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tv_name"
             app:layout_constraintTop_toBottomOf="@id/i_email" />
 
         <TextView
-            android:id="@+id/department"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_25sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
+            android:id="@+id/i_phone_no"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:hint="Phone Number"
             android:background="@drawable/green_round_corner_square"
-            android:hint="Department"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="@+id/i_email"
+            app:layout_constraintStart_toStartOf="@id/tv_phone_no"
+            app:layout_constraintTop_toBottomOf="@id/tv_phone_no" />
+
+        <TextView
+            android:id="@+id/tv_department"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Department"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/i_phone_no"
             app:layout_constraintTop_toBottomOf="@id/i_phone_no" />
 
         <TextView
-            android:id="@+id/roll_no"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_25sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
+            android:id="@+id/department"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:hint="Department"
             android:background="@drawable/green_round_corner_square"
-            android:hint="Roll Number"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="@+id/i_phone_no"
+            app:layout_constraintStart_toStartOf="@id/tv_department"
+            app:layout_constraintTop_toBottomOf="@id/tv_department" />
+
+        <TextView
+            android:id="@+id/tv_roll_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Roll No"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/department"
             app:layout_constraintTop_toBottomOf="@id/department" />
+
+        <TextView
+            android:id="@+id/roll_no"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:hint="Roll Number"
+            android:background="@drawable/green_round_corner_square"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="@+id/department"
+            app:layout_constraintStart_toStartOf="@id/tv_phone_no"
+            app:layout_constraintTop_toBottomOf="@id/tv_roll_no" />
+
+        <TextView
+            android:id="@+id/tv_pitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Pitch"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/department"
+            app:layout_constraintTop_toBottomOf="@id/roll_no" />
 
         <EditText
             android:id="@+id/pitch"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_25sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
             android:background="@drawable/green_round_corner_square"
             android:gravity="top|left"
+            android:padding="@dimen/_8sdp"
             android:hint="Pitch"
             android:lines="10"
+            android:focusable="true"
             android:maxLength="500"
             android:maxLines="15"
             android:minLines="5"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/roll_no" />
+            app:layout_constraintEnd_toEndOf="@+id/roll_no"
+            app:layout_constraintStart_toStartOf="@+id/roll_no"
+            app:layout_constraintTop_toBottomOf="@id/tv_pitch" />
 
         <Button
             android:id="@+id/register"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_150sdp"
             android:layout_height="wrap_content"
             android:text="Register"
+            android:layout_marginTop="@dimen/_20sdp"
             android:textColor="@color/white"
+            android:background="@color/Green"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/_20sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pitch" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
 </layout>
 
 

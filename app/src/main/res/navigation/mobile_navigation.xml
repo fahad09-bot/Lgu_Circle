@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/eventsFragment">
+    app:startDestination="@id/eventsNav">
 
     <fragment
-        android:id="@+id/eventsFragment"
-        android:name="com.codesses.lgucircle.Fragments.Authority.EventsFragment"
+        android:id="@+id/eventsNav"
+        android:name="com.codesses.lgucircle.Fragments.EventsFragment"
         android:label="EventsFragment" />
     <fragment
-        android:id="@+id/ideasFragment"
+        android:id="@+id/ideasNav"
         android:name="com.codesses.lgucircle.Fragments.Authority.IdeasFragment"
         android:label="fragment_ideas"
         tools:layout="@layout/fragment_ideas" />

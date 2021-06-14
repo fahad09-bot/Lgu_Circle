@@ -28,6 +28,7 @@ import com.codesses.lgucircle.activity.ImageViewActivity;
 import com.codesses.lgucircle.databinding.ActivityServicesChatBinding;
 import com.codesses.lgucircle.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -78,10 +79,11 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
 
             @Override
             public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                int position = viewHolder.getBindingAdapterPosition();
                 deleteMessage(position);
             }
         });
+        itemTouchHelper.attachToRecyclerView(binding.chatRecycler);
         setAdapter();
     }
 
@@ -184,8 +186,42 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
             message.put("message", binding.message.getText().toString().trim());
             message.put("timestamp", String.valueOf(System.currentTimeMillis()));
 
-            FirebaseRef.getMessageRef().child(FirebaseRef.getCurrentUserId()).push().setValue(message);
-            FirebaseRef.getMessageRef().child(userId).push().setValue(message);
+            FirebaseRef
+                    .getMessageRef()
+                    .child(FirebaseRef.getCurrentUserId())
+                    .child(FirebaseRef.getUserId() + userId)
+                    .child(messageId)
+                    .updateChildren(message)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull @NotNull Task<Void> task) {
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull @NotNull Exception e) {
+                            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            FirebaseRef
+                    .getMessageRef()
+                    .child(userId)
+                    .child(userId + FirebaseRef.getUserId())
+                    .child(messageId)
+                    .updateChildren(message)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull @NotNull Task<Void> task) {
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull @NotNull Exception e) {
+                            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
             binding.message.setText("");
             ProgressDialog.DismissProgressDialog();
         }
@@ -209,8 +245,42 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
         }
         msg.put("timestamp", String.valueOf(System.currentTimeMillis()));
 
-        FirebaseRef.getMessageRef().child(FirebaseRef.getCurrentUserId()).push().setValue(msg);
-        FirebaseRef.getMessageRef().child(userId).push().setValue(msg);
+        FirebaseRef
+                .getMessageRef()
+                .child(FirebaseRef.getCurrentUserId())
+                .child(FirebaseRef.getUserId() + userId)
+                .child(messageId)
+                .updateChildren(msg)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        FirebaseRef
+                .getMessageRef()
+                .child(userId)
+                .child(userId + FirebaseRef.getUserId())
+                .child(messageId)
+                .updateChildren(msg)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
         binding.message.setText("");
         ProgressDialog.DismissProgressDialog();
 
@@ -220,16 +290,14 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
     private void setAdapter() {
         FirebaseRef.getMessageRef()
                 .child(FirebaseRef.getCurrentUserId())
+                .child(FirebaseRef.getCurrentUserId() + userId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         messageList.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            Chat model = dataSnapshot.getValue(Chat.class);
-                            if (model.getReceiver_id().equals(FirebaseRef.getUserId()) && model.getSender_id().equals(userId) ||
-                                    model.getReceiver_id().equals(userId) && model.getSender_id().equals(FirebaseRef.getCurrentUserId())) {
-                                messageList.add(model);
-                            }
+                            if (dataSnapshot.exists())
+                                messageList.add(dataSnapshot.getValue(Chat.class));
                         }
                         messageAdapter.notifyDataSetChanged();
                         binding.chatRecycler.scrollToPosition(messageList.size() - 1);
@@ -295,6 +363,8 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
     private void deleteMessage(int position) {
         FirebaseRef
                 .getMessageRef()
+                .child(FirebaseRef.getCurrentUserId())
+                .child(FirebaseRef.getUserId() + userId)
                 .child(messageList.get(position).getM_id())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

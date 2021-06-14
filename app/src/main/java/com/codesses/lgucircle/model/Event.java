@@ -2,8 +2,12 @@ package com.codesses.lgucircle.model;
 
 public class Event {
 
-    String e_id, info, date, department, image;
+    String e_id, info, date, department, image, name;
     int type;
+
+    public String getName() {
+        return name;
+    }
 
     public String getE_id() {
         return e_id;
