@@ -45,4 +45,9 @@
         <!--        <item name="behavior_peekHeight">@dimen/_330sdp</item>-->
         <item name="android:background">@drawable/service_shape</item>
     </style>
+
+    <!-- Splash screen theme. -->
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
 </resources>

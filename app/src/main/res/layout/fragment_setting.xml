@@ -1,327 +1,342 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragments.SettingFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
-    <!-- TODO: Update blank fragment layout -->
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_40sdp">
+        android:layout_height="match_parent"
+        tools:context=".Fragments.SettingFragment">
 
 
-            <com.mikhaellopez.circularimageview.CircularImageView
-                android:id="@+id/profile_img"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                app:civ_border_width="3dp"
-                app:civ_border_color="@color/dark_green"
-                android:src="@drawable/profile_icon"
-                android:layout_marginTop="15dp"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginLeft="@dimen/_10sdp"
-                tools:ignore="MissingConstraints" />
+        <!-- TODO: Update blank fragment layout -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-
-            <TextView
-                android:id="@+id/user_name"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_5sdp"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12ssp"
-                android:textStyle="bold"
-                android:text="Fahad"
-                app:layout_constraintStart_toEndOf="@id/profile_img"
-                app:layout_constraintTop_toTopOf="@id/profile_img" />
+                android:layout_marginTop="@dimen/_10sdp">
 
-            <TextView
-                android:id="@+id/user_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_5sdp"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12ssp"
-                android:textStyle="italic"
-                app:layout_constraintStart_toEndOf="@id/profile_img"
-                app:layout_constraintTop_toBottomOf="@id/user_name"
-                android:text="abc@gmail.com"
-                />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/freelance_cv"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_60sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                app:cardCornerRadius="@dimen/_10sdp"
-                app:layout_constraintEnd_toStartOf="@id/incubation_cv"
-                app:layout_constraintStart_toStartOf="@+id/your_profile_cv"
-                app:layout_constraintTop_toBottomOf="@id/profile_img">
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:id="@+id/profile_img"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="@dimen/_60sdp"
+                    app:civ_border_width="1dp"
+                    app:civ_border_color="@color/dark_green"
+                    android:src="@drawable/profile_icon"
+                    android:layout_marginTop="15dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginLeft="@dimen/_10sdp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:id="@+id/add"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_toEndOf="@id/profile_img"
+                    android:src="@drawable/ic_baseline_add_24"
+                    android:tint="@color/Green"
+                    app:layout_constraintBottom_toBottomOf="@id/profile_img"
+                    app:layout_constraintEnd_toEndOf="@id/profile_img"
+                    app:layout_constraintStart_toEndOf="@id/profile_img"
+                    app:layout_constraintTop_toTopOf="@id/profile_img"
+                    app:layout_constraintVertical_bias="0.85" />
+
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_5sdp"
-                    android:orientation="vertical">
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold"
+                    android:text="Fahad"
+                    app:layout_constraintTop_toBottomOf="@id/profile_img"
+                    app:layout_constraintEnd_toEndOf="@id/profile_img"
+                    app:layout_constraintStart_toStartOf="@id/profile_img" />
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:src="@drawable/ic_freelance"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textSize="@dimen/_14ssp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:text="@string/garrisonian_services" />
-
-                </LinearLayout>
-
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/incubation_cv"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="@id/freelance_cv"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginStart="@dimen/_5sdp"
-                app:layout_constraintTop_toBottomOf="@id/profile_img"
-                app:layout_constraintStart_toEndOf="@id/freelance_cv"
-                app:layout_constraintEnd_toEndOf="@id/your_profile_cv"
-                app:cardCornerRadius="@dimen/_10sdp"
-                >
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
+                <TextView
+                    android:id="@+id/user_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_5sdp"
-                    >
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:src="@drawable/ic_brain"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/_14ssp"
-                        android:textColor="@color/black"
-                        android:text="@string/idea_registration"
-                        />
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="italic"
+                    app:layout_constraintStart_toStartOf="@id/profile_img"
+                    app:layout_constraintEnd_toEndOf="@id/profile_img"
+                    app:layout_constraintTop_toBottomOf="@id/user_name"
+                    android:text="abc@gmail.com" />
 
-                </LinearLayout>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/freelance_cv"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:layout_constraintEnd_toStartOf="@id/incubation_cv"
+                    app:layout_constraintStart_toStartOf="@+id/your_profile_cv"
+                    app:layout_constraintTop_toBottomOf="@id/user_email">
 
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/your_profile_cv"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginTop="@dimen/_50sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/freelance_cv"
-                app:cardCornerRadius="@dimen/_5sdp"
-                app:cardElevation="@dimen/_5sdp"
-                android:layout_margin="@dimen/_5sdp"
-                >
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_5sdp"
-                    >
-
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="@string/your_profile"
-                        android:textColor="@color/black"
-                        android:drawablePadding="@dimen/_5sdp"
-                        android:textSize="@dimen/_14ssp"
-                        android:gravity="start|center_vertical"
-                        android:layout_centerVertical="true"
-                        android:textStyle="bold"
-                        app:drawableRightCompat="@drawable/ic_next"
-                        app:drawableLeftCompat="@drawable/ic_mypro" />
+                        android:layout_margin="@dimen/_5sdp"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_service"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@color/black" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="@dimen/_14ssp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:text="@string/garrisonian_services" />
+
+                    </LinearLayout>
 
 
-                </RelativeLayout>
+                </androidx.cardview.widget.CardView>
 
-            </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/incubation_cv"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="@id/freelance_cv"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    app:layout_constraintTop_toBottomOf="@id/user_email"
+                    app:layout_constraintStart_toEndOf="@id/freelance_cv"
+                    app:layout_constraintEnd_toEndOf="@id/your_profile_cv"
+                    app:cardCornerRadius="@dimen/_10sdp">
 
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/change_pass_cv"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginTop="@dimen/_2sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/your_profile_cv"
-                app:cardCornerRadius="@dimen/_5sdp"
-                android:layout_margin="@dimen/_5sdp"
-                app:cardElevation="@dimen/_5sdp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_5sdp">
-
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="@string/change_pass"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_14ssp"
-                        android:drawablePadding="@dimen/_5sdp"
-                        android:textStyle="bold"
-                        android:gravity="start|center_vertical"
-                        android:layout_centerVertical="true"
-                        app:drawableRightCompat="@drawable/ic_next"
-                        app:drawableLeftCompat="@drawable/ic_password" />
+                        android:orientation="vertical"
+                        android:layout_margin="@dimen/_5sdp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_brain"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/_14ssp"
+                            android:textColor="@color/black"
+                            android:text="@string/idea_registration" />
+
+                    </LinearLayout>
 
 
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/your_profile_cv"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_marginTop="@dimen/_50sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/freelance_cv"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    app:cardElevation="@dimen/_5sdp"
+                    android:layout_margin="@dimen/_5sdp">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/contact_us_cv"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginTop="@dimen/_2sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/change_pass_cv"
-                app:cardCornerRadius="@dimen/_5sdp"
-                android:layout_margin="@dimen/_5sdp"
-                app:cardElevation="@dimen/_5sdp"
-                >
-
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_5sdp"
-                    >
-
-                    <TextView
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="@string/contact_us"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_14ssp"
-                        android:drawablePadding="@dimen/_5sdp"
-                        android:textStyle="bold"
-                        android:drawableLeft="@drawable/ic_contact"
-                        android:gravity="start|center_vertical"
-                        android:layout_centerVertical="true"
-                        app:drawableRightCompat="@drawable/ic_next"/>
+                        android:background="@color/white"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/_5sdp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="@string/your_profile"
+                            android:textColor="@color/black"
+                            android:drawablePadding="@dimen/_5sdp"
+                            android:textSize="@dimen/_14ssp"
+                            android:gravity="start|center_vertical"
+                            android:layout_centerVertical="true"
+                            android:textStyle="bold"
+                            app:drawableRightCompat="@drawable/ic_next"
+                            app:drawableLeftCompat="@drawable/ic_my_profile" />
 
 
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+                    </RelativeLayout>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/about_cv"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginTop="@dimen/_2sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/contact_us_cv"
-                app:cardCornerRadius="@dimen/_5sdp"
-                android:layout_margin="@dimen/_5sdp"
-                app:cardElevation="@dimen/_5sdp"
-                >
+                </androidx.cardview.widget.CardView>
 
-                <RelativeLayout
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/change_pass_cv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_5sdp">
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/your_profile_cv"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    android:layout_margin="@dimen/_5sdp"
+                    app:cardElevation="@dimen/_5sdp">
 
-                    <TextView
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text= "@string/about"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_14ssp"
-                        android:textStyle="bold"
-                        android:drawablePadding="@dimen/_5sdp"
-                        android:drawableLeft="@drawable/ic_info"
-                        android:gravity="start|center_vertical"
-                        android:layout_centerVertical="true"
-                        app:drawableRightCompat="@drawable/ic_next"/>
+                        android:background="@color/white"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/_5sdp">
 
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="@string/change_pass"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp"
+                            android:drawablePadding="@dimen/_5sdp"
+                            android:textStyle="bold"
+                            android:gravity="start|center_vertical"
+                            android:layout_centerVertical="true"
+                            app:drawableRightCompat="@drawable/ic_next"
+                            app:drawableLeftCompat="@drawable/ic_password" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/sign_out_cv"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/about_cv"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="@dimen/_5sdp"
-                app:cardCornerRadius="@dimen/_5sdp"
-                app:cardElevation="@dimen/_5sdp"
-                android:layout_margin="@dimen/_5sdp"
-                >
 
-                <RelativeLayout
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/contact_us_cv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_5sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/change_pass_cv"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    android:layout_margin="@dimen/_5sdp"
+                    app:cardElevation="@dimen/_5sdp">
 
 
-                    >
-
-                    <TextView
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="@string/sign_out"
-                        android:textColor="@color/black"
-                        android:drawablePadding="@dimen/_5sdp"
-                        android:textSize="@dimen/_14ssp"
-                        android:textStyle="bold"
-                        android:drawableLeft="@drawable/ic_logout"
-                        android:gravity="start|center_vertical"
-                        android:layout_centerVertical="true"
-                        app:drawableRightCompat="@drawable/ic_next"/>
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/_5sdp">
 
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="@string/contact_us"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp"
+                            android:drawablePadding="@dimen/_5sdp"
+                            android:textStyle="bold"
+                            android:gravity="start|center_vertical"
+                            android:layout_centerVertical="true"
+                            app:drawableRightCompat="@drawable/ic_next"
+                            app:drawableLeftCompat="@drawable/ic_contact_us" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
 
-</FrameLayout>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/about_cv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/contact_us_cv"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    android:layout_margin="@dimen/_5sdp"
+                    app:cardElevation="@dimen/_5sdp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/_5sdp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="@string/about"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp"
+                            android:textStyle="bold"
+                            android:drawablePadding="@dimen/_5sdp"
+                            android:gravity="start|center_vertical"
+                            android:layout_centerVertical="true"
+                            app:drawableRightCompat="@drawable/ic_next"
+                            app:drawableLeftCompat="@drawable/ic_about" />
+
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/sign_out_cv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_40sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/about_cv"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    app:cardElevation="@dimen/_5sdp"
+                    android:layout_margin="@dimen/_5sdp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/_5sdp"
+
+
+                        >
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="@string/sign_out"
+                            android:textColor="@color/black"
+                            android:drawablePadding="@dimen/_5sdp"
+                            android:textSize="@dimen/_14ssp"
+                            android:textStyle="bold"
+                            android:drawableTint="@color/black"
+                            android:gravity="start|center_vertical"
+                            android:layout_centerVertical="true"
+                            app:drawableRightCompat="@drawable/ic_next"
+                            app:drawableStartCompat="@drawable/ic_logout" />
+
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+    </FrameLayout>
+</layout>

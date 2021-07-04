@@ -9,6 +9,15 @@ public class Chat {
     Integer type;
     String timestamp;
     String messageImage;
+    boolean isPicked = false;
+
+    public boolean isPicked() {
+        return isPicked;
+    }
+
+    public void setPicked(boolean picked) {
+        isPicked = picked;
+    }
 
     public String getM_id() {
         return m_id;

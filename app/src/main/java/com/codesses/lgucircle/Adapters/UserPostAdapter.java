@@ -12,6 +12,7 @@ import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.codesses.lgucircle.Interfaces.OnItemClick;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.databinding.UserFeedItemLayoutBinding;
 import com.codesses.lgucircle.model.Post;
@@ -22,10 +23,12 @@ import java.util.List;
 public class UserPostAdapter extends RecyclerView.Adapter<UserPostViewHolder> {
     Context context;
     List<Post> list;
+    OnItemClick onItemClick;
 
-    public UserPostAdapter(Context context, List<Post> list) {
+    public UserPostAdapter(Context context, List<Post> list, OnItemClick onItemClick) {
         this.context = context;
         this.list = list;
+        this.onItemClick = onItemClick;
     }
 
     @NonNull
@@ -39,7 +42,7 @@ public class UserPostAdapter extends RecyclerView.Adapter<UserPostViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull UserPostViewHolder holder, int position) {
         Post model = list.get(position);
-        holder.bind(context, model);
+        holder.bind(context, model, onItemClick);
     }
 
     @Override

@@ -1,18 +1,25 @@
 package com.codesses.lgucircle.activity.Services;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.codesses.lgucircle.Singleton.VolleySingleton;
+import com.codesses.lgucircle.Utils.ApplicationUtils;
+import com.codesses.lgucircle.Utils.SharedPrefManager;
+import com.codesses.lgucircle.Enums.SharedPrefKey;
 import com.codesses.lgucircle.model.Chat;
 import com.codesses.lgucircle.Adapters.MessageAdapter;
 import com.codesses.lgucircle.Dialogs.MenuDialog;
@@ -41,22 +48,25 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
 
-    ActivityServicesChatBinding binding;
+    public static ActivityServicesChatBinding binding;
     AppCompatActivity mContext;
     MessageAdapter messageAdapter;
     String userId;
-    User user;
+    User user, currentUser;
     String message;
     List<Chat> messageList = new ArrayList<>();
     Uri selectedImage;
-    String imageUrl;
+    String imageUrl, fcmToken = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,19 +81,37 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
         binding.chatRecycler.setAdapter(messageAdapter);
         binding.send.setOnClickListener(this::sendMessage);
         binding.attach.setOnClickListener(this::openDialogue);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder, @NonNull @NotNull RecyclerView.ViewHolder target) {
-                return false;
-            }
+//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+//            @Override
+//            public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder, @NonNull @NotNull RecyclerView.ViewHolder target) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
+//                int position = viewHolder.getBindingAdapterPosition();
+//                deleteMessage(position);
+//            }
+//        });
+//        itemTouchHelper.attachToRecyclerView(binding.chatRecycler);
 
+        binding.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getBindingAdapterPosition();
-                deleteMessage(position);
+            public void onClick(View v) {
+                new AlertDialog.Builder(mContext)
+                        .setMessage("Delete " + Constants.selectedMessages + " messages?")
+                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteMessages();
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("CANCEL", null)
+                        .create()
+                        .show();
             }
         });
-        itemTouchHelper.attachToRecyclerView(binding.chatRecycler);
         setAdapter();
     }
 
@@ -163,6 +191,19 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
                 user = snapshot.getValue(User.class);
                 binding.userName.setText(user.getFirst_name() + " " + user.getLast_name());
                 Picasso.get().load(user.getProfile_img()).into(binding.userImage);
+                fcmToken = user.getFcmToken();
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+
+        FirebaseRef.getUserRef().child(FirebaseRef.getCurrentUserId()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                currentUser = snapshot.getValue(User.class);
             }
 
             @Override
@@ -213,7 +254,9 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull @NotNull Task<Void> task) {
-
+                            if (task.isSuccessful()) {
+                                sendNotification();
+                            }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -224,6 +267,77 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
                     });
             binding.message.setText("");
             ProgressDialog.DismissProgressDialog();
+        }
+
+
+    }
+
+    private void sendNotification() {
+        String nId = FirebaseRef.getNotificationRef().push().getKey();
+
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("n_id", nId);
+        map.put("timestamp", System.currentTimeMillis());
+        map.put("type", 0);
+        map.put("sent_by", FirebaseRef.getUserId());
+        map.put("sent_to", userId);
+        map.put("is_read", 0);
+
+        assert nId != null;
+        FirebaseRef.getNotificationRef().child(nId).updateChildren(map)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        sendPushNotification();
+                    } else {
+                        Log.e("error_tag", task.getException().getMessage());
+                    }
+                });
+
+    }
+
+    private void sendPushNotification() {
+
+        try {
+            JSONObject mainObject = new JSONObject();
+            JSONObject notificationObject = new JSONObject();
+            JSONObject dataObject = new JSONObject();
+            mainObject.put("to", "/token/" + fcmToken);
+
+//            Notification body
+            notificationObject.put("title", "message");
+            notificationObject.put("body", mContext.getString(R.string.new_message));
+
+//            Custom payload
+            dataObject.put("c_id", userId);
+            dataObject.put("user_image", currentUser.getProfile_img());
+            dataObject.put("user_name", currentUser.getFull_name());
+            mainObject.put("notification", notificationObject);
+            mainObject.put("data", dataObject);
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                    ApplicationUtils.FCM_URL,
+                    mainObject,
+                    response -> {
+
+                        Log.d("FCM_RESPONSE", "sendPushNotification: " + response);
+                        Toast.makeText(mContext, "Posted", Toast.LENGTH_SHORT).show();
+
+                    },
+                    error -> Log.d("FCM_RESPONSE", "Error " + error)
+            ) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("content-type", "application/json");
+                    headers.put("authorization", "key=AAAABefXTZo:APA91bFhvO8QxjODhBLgZSyqgnzIRYTOl02b2coksyna5790lvige4VHhKhdjD88dArcjHjgBbAfMl2oKNBKxJqTjLTT4aOqJRy-XFH70vftrxlBUXJU-H6hHWLYeGyLJK1GeoMpJjwB");
+                    return headers;
+                }
+            };
+
+            VolleySingleton.getInstance(mContext).addToRequestQueue(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
 
@@ -272,7 +386,9 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull @NotNull Task<Void> task) {
-
+                        if (task.isSuccessful()) {
+                            sendNotification();
+                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -299,8 +415,10 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
                             if (dataSnapshot.exists())
                                 messageList.add(dataSnapshot.getValue(Chat.class));
                         }
-                        messageAdapter.notifyDataSetChanged();
-                        binding.chatRecycler.scrollToPosition(messageList.size() - 1);
+                        if (!Constants.isMessagePicked) {
+                            messageAdapter.notifyDataSetChanged();
+                            binding.chatRecycler.scrollToPosition(messageList.size() - 1);
+                        }
 
 
                     }
@@ -359,26 +477,51 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
         startActivity(intent);
     }
 
-
-    private void deleteMessage(int position) {
-        FirebaseRef
-                .getMessageRef()
-                .child(FirebaseRef.getCurrentUserId())
-                .child(FirebaseRef.getUserId() + userId)
-                .child(messageList.get(position).getM_id())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            dataSnapshot.getRef().removeValue();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
-                    }
-                });
+    @Override
+    public void onLongClick() {
+        binding.btnDelete.setVisibility(View.VISIBLE);
+        binding.message.setEnabled(false);
+        binding.attach.setEnabled(false);
+        binding.send.setEnabled(false);
     }
 
+
+    private void deleteMessages() {
+        for (int i = 0; i < messageList.size(); i++) {
+            if (messageList.get(i).isPicked()) {
+                FirebaseRef
+                        .getMessageRef()
+                        .child(FirebaseRef.getCurrentUserId())
+                        .child(FirebaseRef.getUserId() + userId)
+                        .child(messageList.get(i).getM_id())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                    dataSnapshot.getRef().removeValue();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
+            }
+        }
+        binding.btnDelete.setVisibility(View.GONE);
+        Constants.selectedMessages = -1;
+        Constants.isMessagePicked = false;
+        binding.message.setEnabled(true);
+        binding.send.setEnabled(true);
+        binding.attach.setEnabled(true);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Constants.isMessagePicked = false;
+        Constants.selectedMessages = -1;
+    }
 }

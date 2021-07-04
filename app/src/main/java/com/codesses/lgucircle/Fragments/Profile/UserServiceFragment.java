@@ -10,8 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.codesses.lgucircle.Adapters.ServiceAdapter;
 import com.codesses.lgucircle.Interfaces.OnItemClick;
@@ -19,6 +22,9 @@ import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.databinding.FragmentUserServiceBinding;
 import com.codesses.lgucircle.model.Service;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -54,6 +60,10 @@ public class UserServiceFragment extends Fragment {
     public UserServiceFragment(String userId) {
         // Required empty public constructor
         this.userId = userId;
+    }
+
+    public UserServiceFragment() {
+        // Required empty public constructor
     }
 //
 //    /**
@@ -91,46 +101,24 @@ public class UserServiceFragment extends Fragment {
         binding = FragmentUserServiceBinding.bind(inflater.inflate(R.layout.fragment_user_service, container, false));
         getServicesData();
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder, @NonNull @NotNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
-                deleteService(position);
-            }
-        });
-        itemTouchHelper.attachToRecyclerView(binding.servicesRecycler);
+//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+//            @Override
+//            public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder, @NonNull @NotNull RecyclerView.ViewHolder target) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
+//                int position = viewHolder.getAdapterPosition();
+//                deleteService(position);
+//            }
+//        });
+//        itemTouchHelper.attachToRecyclerView(binding.servicesRecycler);
 
 
         return binding.getRoot();
     }
 
-    private void deleteService(int position) {
-        FirebaseRef
-                .getServiceRef()
-                .child(servicesList.get(position).getS_id())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            Service service = dataSnapshot.getValue(Service.class);
-                            assert service != null;
-                            if (service.getS_id().equals(servicesList.get(position).getS_id()) && service.getPosted_by().equals(FirebaseRef.getUserId())) {
-                                dataSnapshot.getRef().removeValue();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                        Log.e("OnCancelled", error.getMessage());
-                    }
-                });
-    }
 
 
     private void getServicesData() {
@@ -153,8 +141,14 @@ public class UserServiceFragment extends Fragment {
                                 public void onClick(String id) {
 
                                 }
+
+                                @Override
+                                public void onMenuClick(View view, String id) {
+                                    showMenu(view, id);
+                                }
                             });
                             binding.servicesRecycler.setAdapter(serviceAdapter);
+                            serviceAdapter.notifyDataSetChanged();
 
                         }
                     }
@@ -165,4 +159,36 @@ public class UserServiceFragment extends Fragment {
                     }
                 });
     }
+
+    private void showMenu(View v, String id) {
+        PopupMenu popup = new PopupMenu(fragmentActivity, v);
+
+        // This activity implements OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.delete:
+                        FirebaseRef
+                                .getServiceRef()
+                                .child(id)
+                                .removeValue()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(fragmentActivity, "Successful", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                        break;
+
+                }
+                return false;
+            }
+        });
+        popup.inflate(R.menu.post_menu);
+        popup.show();
+    }
+
 }

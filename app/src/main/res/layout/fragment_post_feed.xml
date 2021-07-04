@@ -20,6 +20,7 @@
             android:tint="@color/white"
             android:layout_gravity="end|bottom"
             android:layout_margin="20dp"
+            android:background="@drawable/gradient_shape"
             android:contentDescription="@string/submit"
             android:src="@drawable/ic_baseline_add_24" />
     </FrameLayout>

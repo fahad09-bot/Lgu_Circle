@@ -32,6 +32,7 @@ public class ProgressDialog {
         progressDialog.setTitle(context.getString(title));
         progressDialog.setMessage(context.getString(msg));
         progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
         progressDialog.show();
     }
 

@@ -1,105 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/_10sdp"
-    app:cardCornerRadius="@dimen/_10sdp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        app:cardCornerRadius="@dimen/_10sdp">
 
-        <ImageView
-            android:id="@+id/image"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_150sdp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/download"
-            android:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/month"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_10sdp"
-            android:text="Apr"
-            android:textSize="@dimen/_13ssp"
-            android:textAllCaps="true"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@id/image"
-            app:layout_constraintTop_toBottomOf="@id/image" />
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_150sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/download"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/day"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="27"
-            android:textColor="@color/Green"
-            android:textSize="@dimen/_20ssp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@id/month"
-            app:layout_constraintTop_toBottomOf="@id/month" />
+            <TextView
+                android:id="@+id/month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_10sdp"
+                android:text="Apr"
+                android:textSize="@dimen/_13ssp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/image"
+                app:layout_constraintTop_toBottomOf="@id/image" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            app:layout_constraintTop_toTopOf="@id/month"
-            app:layout_constraintEnd_toEndOf="@id/image"
-            app:layout_constraintStart_toEndOf="@id/month"
-            android:text="User Experience Session"
-            android:id="@+id/eventName"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_18ssp"
-            android:layout_marginStart="@dimen/_10sdp"
-            app:layout_constraintBottom_toBottomOf="@id/month"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/dayTime"
-            app:layout_constraintTop_toBottomOf="@id/eventName"
-            app:layout_constraintStart_toStartOf="@id/eventName"
-            android:text="Thu 12:00"
-            android:textSize="@dimen/_13ssp"
-            android:fontFamily="sans-serif-medium"
-            />
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/dayTime"
-            app:layout_constraintBottom_toBottomOf="@id/dayTime"
-            app:layout_constraintStart_toEndOf="@id/dayTime"
-            android:src="@drawable/indicator"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:id="@+id/separator"
-            />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/department"
-            app:layout_constraintTop_toTopOf="@id/dayTime"
-            app:layout_constraintBottom_toBottomOf="@id/dayTime"
-            app:layout_constraintStart_toEndOf="@id/separator"
-            app:layout_constraintEnd_toEndOf="@id/image"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:fontFamily="sans-serif-medium"
-            android:textSize="@dimen/_13ssp"
-            android:text="Computer Science"/>
-        <TextView
-            android:layout_width="0dp"
-            android:id="@+id/eventInfo"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/dayTime"
-            app:layout_constraintEnd_toEndOf="@id/image"
-            app:layout_constraintTop_toBottomOf="@id/dayTime"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="@dimen/_5sdp"
-            android:text="Hi boy kaisa hai kiya kr raha hai aaj kl"
-            android:textSize="@dimen/_13ssp"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+            <TextView
+                android:id="@+id/day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="27"
+                android:textColor="@color/Green"
+                android:textSize="@dimen/_20ssp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@id/month"
+                app:layout_constraintTop_toBottomOf="@id/month" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                app:layout_constraintTop_toTopOf="@id/month"
+                app:layout_constraintEnd_toEndOf="@id/image"
+                app:layout_constraintStart_toEndOf="@id/month"
+                android:text="User Experience Session"
+                android:id="@+id/eventName"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_18ssp"
+                android:layout_marginStart="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="@id/month" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dayTime"
+                app:layout_constraintTop_toBottomOf="@id/eventName"
+                app:layout_constraintStart_toStartOf="@id/eventName"
+                android:text="Thu 12:00"
+                android:textSize="@dimen/_13ssp"
+                android:fontFamily="sans-serif-medium" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/dayTime"
+                app:layout_constraintBottom_toBottomOf="@id/dayTime"
+                app:layout_constraintStart_toEndOf="@id/dayTime"
+                android:src="@drawable/indicator"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:id="@+id/separator" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/department"
+                app:layout_constraintTop_toTopOf="@id/dayTime"
+                app:layout_constraintBottom_toBottomOf="@id/dayTime"
+                app:layout_constraintStart_toEndOf="@id/separator"
+                app:layout_constraintEnd_toEndOf="@id/image"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="@dimen/_13ssp"
+                android:text="Computer Science" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:id="@+id/eventInfo"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/dayTime"
+                app:layout_constraintEnd_toEndOf="@id/image"
+                app:layout_constraintTop_toBottomOf="@id/dayTime"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:text="Hi boy kaisa hai kiya kr raha hai aaj kl"
+                android:textSize="@dimen/_13ssp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

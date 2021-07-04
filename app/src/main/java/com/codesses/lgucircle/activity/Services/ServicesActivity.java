@@ -5,11 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,19 +21,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.codesses.lgucircle.Adapters.ServiceAdapter;
 import com.codesses.lgucircle.Dialogs.ProgressDialog;
+import com.codesses.lgucircle.Interfaces.OnItemClick;
 import com.codesses.lgucircle.R;
+import com.codesses.lgucircle.Utils.ApplicationUtils;
+import com.codesses.lgucircle.Utils.CheckEmptyFields;
 import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.databinding.ActivityServicesBinding;
 import com.codesses.lgucircle.databinding.AddServiceBinding;
 import com.codesses.lgucircle.model.Service;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -42,8 +53,10 @@ public class ServicesActivity extends AppCompatActivity {
     ActivityServicesBinding binding;
     LinkedList<Service> servicesList = new LinkedList<>();
     ServiceAdapter serviceAdapter;
+    boolean isUrl = false;
 
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,20 +66,26 @@ public class ServicesActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         binding.servicesRecycler.setLayoutManager(linearLayoutManager);
 
-        setSupportActionBar(binding.toolbar);
-        setTitle(R.string.services);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        serviceAdapter = new ServiceAdapter(mContext, servicesList, id -> {
-            Intent intent = new Intent(mContext, ServicesChatAC.class);
-            intent.putExtra(Constants.USER_ID, id);
-            startActivity(intent);
-        });
-        binding.servicesRecycler.setAdapter(serviceAdapter);
+        serviceAdapter = new ServiceAdapter(mContext, servicesList, new OnItemClick() {
+            @Override
+            public void onClick(String id) {
+                Intent intent = new Intent(mContext, ServicesChatAC.class);
+                intent.putExtra(Constants.USER_ID, id);
+                startActivity(intent);
+            }
 
+            @Override
+            public void onMenuClick(View view, String id) {
+                showMenu(view, id);
+            }
+        });
+
+        binding.servicesRecycler.setAdapter(serviceAdapter);
 
 
         getServices();
     }
+
 
     private void getServices() {
         FirebaseRef.getServiceRef()
@@ -79,7 +98,6 @@ public class ServicesActivity extends AppCompatActivity {
                             servicesList.addFirst(model);
                         }
                         serviceAdapter.notifyDataSetChanged();
-
 
                     }
 
@@ -109,6 +127,7 @@ public class ServicesActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 //        dialog.setCancelable(false);
+        setTextChangeListener(dialogBinding);
 
         dialogBinding.serviceUpload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,15 +142,19 @@ public class ServicesActivity extends AppCompatActivity {
                 String userId = FirebaseRef.getCurrentUserId();
                 mapService.put("posted_by", userId);
                 String description = dialogBinding.serviceDescription.getText().toString();
-                mapService.put("description", description);
-                String link = dialogBinding.serviceLinks.getText().toString();
-                if (TextUtils.isEmpty(link))
-                    mapService.put("Url", "");
-                else if (!Patterns.WEB_URL.matcher(link).matches()) {
-                    dialogBinding.serviceLinks.setError("Please Enter Valid Email");
+                if (CheckEmptyFields.isEditText(mContext, description, dialogBinding.serviceDescription))
+                    mapService.put("description", description);
+                else {
+                    ProgressDialog.DismissProgressDialog();
                     return;
-                } else
+                }
+
+                String link = dialogBinding.serviceLinks.getText().toString();
+                if (!isUrl)
+                    mapService.put("Url", "");
+                else if (isUrl)
                     mapService.put("Url", link);
+
 
                 mapService.put("time_stamp", System.currentTimeMillis());
 
@@ -155,4 +178,72 @@ public class ServicesActivity extends AppCompatActivity {
         });
         dialog.show();
     }
+
+    private void setTextChangeListener(AddServiceBinding dialogBinding) {
+        dialogBinding.serviceLinks.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                validUrl(s.toString(), dialogBinding);
+            }
+        });
+    }
+
+    private void validUrl(String url, AddServiceBinding dialogBinding) {
+        if (!TextUtils.isEmpty(url)) {
+            if (ApplicationUtils.isUrlValid(url)) {
+                isUrl = true;
+                dialogBinding.serviceLinks.setError(null);
+            } else {
+                isUrl = false;
+                dialogBinding.serviceLinks.setError(mContext.getString(R.string.invalid_url_format));
+            }
+
+        } else {
+            isUrl = false;
+            dialogBinding.serviceLinks.setError(null);
+        }
+
+    }
+
+    private void showMenu(View v, String id) {
+        PopupMenu popup = new PopupMenu(mContext, v);
+
+        // This activity implements OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.delete:
+                        FirebaseRef
+                                .getServiceRef()
+                                .child(id)
+                                .removeValue()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(mContext, "Successful", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                        break;
+
+                }
+                return false;
+            }
+        });
+        popup.inflate(R.menu.post_menu);
+        popup.show();
+    }
+
 }

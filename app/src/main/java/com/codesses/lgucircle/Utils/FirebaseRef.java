@@ -75,6 +75,12 @@ public class FirebaseRef {
         return getDatabaseInstance().child("events");
     }
 
+    //    TODO: Get Notifications Reference
+    public static DatabaseReference getNotificationRef() {
+        return getDatabaseInstance().child("notification");
+    }
+
+
     /****************************
      *   Firebase Storage
      * @return
@@ -99,6 +105,11 @@ public class FirebaseRef {
     //    TODO: Get Events Storage Reference
     public static StorageReference getEventsStorage() {
         return getStorageInstance().child("Events/").child("Images/" + UUID.randomUUID().toString());
+    }
+
+    //    TODO: Get Events Storage Reference
+    public static StorageReference getProfileStorage() {
+        return getStorageInstance().child("users/profiles");
     }
 
 }

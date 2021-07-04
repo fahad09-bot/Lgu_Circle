@@ -1,30 +1,31 @@
 package com.codesses.lgucircle.Authentication;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.codesses.lgucircle.Dialogs.ForgotPassDialog;
 import com.codesses.lgucircle.Dialogs.ProgressDialog;
-import com.codesses.lgucircle.activity.AuthorityAC;
-import com.codesses.lgucircle.activity.MainActivity;
 import com.codesses.lgucircle.Interfaces.OnForgotPass;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.Utils.SharedPrefManager;
+import com.codesses.lgucircle.activity.AuthorityAC;
+import com.codesses.lgucircle.activity.MainActivity;
+import com.codesses.lgucircle.databinding.ActivityLoginBinding;
+import com.codesses.lgucircle.Enums.SharedPrefKey;
 import com.codesses.lgucircle.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,37 +34,86 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity implements OnForgotPass {
 
-    @BindView(R.id.login_email)
-    EditText Login_email;
-    @BindView(R.id.login_pass)
-    EditText Login_pass;
-    @BindView(R.id.forgot_pass)
-    TextView Forgot_pass;
-    @BindView(R.id.new_user)
-    Button New_user;
-    @BindView(R.id.login_btn)
-    Button Login_btn;
+    private AppCompatActivity mContext;
+
+    private ActivityLoginBinding binding;
+
+    String userEmail = "", userPassword = "";
+    Query query;
+    ValueEventListener valueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+        mContext = this;
+        binding = DataBindingUtil.setContentView(mContext, R.layout.activity_login);
 
 
 //        TODO: Click Listeners
-        New_user.setOnClickListener(this::createAccount);
-        Login_btn.setOnClickListener(this::getUserData);
+        binding.llNewUser.setOnClickListener(this::createAccount);
+        binding.loginBtn.setOnClickListener(this::getUserData);
 
-
+//        TODO: Text Change Listeners
+        setTextChangeListeners();
     }
 
-//forgot password
+    private void setTextChangeListeners() {
+        binding.loginEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().length() != 0) {
+                    userEmail = s.toString();
+                    setButtonEnabled(userEmail, userPassword);
+
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        binding.loginPass.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().length() != 0) {
+                    userPassword = s.toString();
+                    setButtonEnabled(userEmail, userPassword);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void setButtonEnabled(String userEmail, String userPassword) {
+        if (!TextUtils.isEmpty(userEmail) && !TextUtils.isEmpty(userPassword))
+            binding.loginBtn.setEnabled(true);
+        else
+            binding.loginBtn.setEnabled(false);
+    }
+
+    //forgot password
     @Override
     public void onApply(String email) {
         FirebaseRef.getAuth()
@@ -86,10 +136,11 @@ public class LoginActivity extends AppCompatActivity implements OnForgotPass {
     }
 
     private void getUserData(View view) {
-        String email = Login_email.getText().toString().trim();
-        String pass = Login_pass.getText().toString().trim();
+        String email = binding.loginEmail.getText().toString().trim();
+        String pass = binding.loginPass.getText().toString().trim();
 
         if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass)) {
+            ProgressDialog.ShowProgressDialog(mContext, R.string.signing_in, R.string.please_wait);
             getUserType(email, pass);
         } else {
             Toast.makeText(this, "Fields Must be Filled", Toast.LENGTH_SHORT).show();
@@ -97,9 +148,9 @@ public class LoginActivity extends AppCompatActivity implements OnForgotPass {
     }
 
     private void getUserType(String email, String pass) {
-        Query query = FirebaseRef.getUserRef().orderByChild("email").equalTo(email);
+        query = FirebaseRef.getUserRef().orderByChild("email").equalTo(email);
 
-        query.addValueEventListener(new ValueEventListener() {
+        valueEventListener = query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getChildrenCount() > 0) {
@@ -136,13 +187,10 @@ public class LoginActivity extends AppCompatActivity implements OnForgotPass {
                         FirebaseUser user = FirebaseRef.getCurrentUser();
 
                         if (user.isEmailVerified()) {
+                            updateToken(activity);
 
-                            Intent intent = new Intent(LoginActivity.this, activity);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            finish();
                         } else {
-
+                            ProgressDialog.DismissProgressDialog();
 //                                TODO: Sign Out For Email Verification
                             FirebaseRef.getAuth().signOut();
                             user.sendEmailVerification();
@@ -151,7 +199,35 @@ public class LoginActivity extends AppCompatActivity implements OnForgotPass {
 
                         }
                     } else {
+                        ProgressDialog.DismissProgressDialog();
                         Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void updateToken(Class activity) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("fcmToken", SharedPrefManager.getInstance(mContext).getSharedData(SharedPrefKey.TOKEN));
+
+        FirebaseRef
+                .getUserRef()
+                .child(FirebaseRef.getCurrentUserId())
+                .updateChildren(map)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                    {
+                        ProgressDialog.DismissProgressDialog();
+                        Intent intent = new Intent(LoginActivity.this, activity);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        ProgressDialog.DismissProgressDialog();
+                        Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -161,6 +237,9 @@ public class LoginActivity extends AppCompatActivity implements OnForgotPass {
         forgotPassDialog.show(getSupportFragmentManager(), "Forgot Pass dialog");
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        query.removeEventListener(valueEventListener);
+    }
 }

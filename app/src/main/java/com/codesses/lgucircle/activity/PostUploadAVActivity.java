@@ -83,6 +83,7 @@ public class PostUploadAVActivity extends AppCompatActivity {
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case ApplicationUtils.IMAGE_PERMISSION_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -253,7 +254,7 @@ public class PostUploadAVActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(PostUploadAVActivity.this, "Post Uploaded", Toast.LENGTH_SHORT).show();
                             ProgressDialog.DismissProgressDialog();
-//                            onBackPressed();
+                            onBackPressed();
                         } else {
                             ProgressDialog.DismissProgressDialog();
 

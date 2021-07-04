@@ -15,19 +15,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LguCircle">
-        <activity android:name=".activity.AuthorityAC"></activity>
+        <activity android:name=".activity.AuthorityAC"/>
         <activity android:name=".activity.Services.ConversationAC" />
-        <activity android:name=".activity.Services.ServicesChatAC" />
-        <activity android:name=".activity.Services.ServicesActivity" />
+        <activity android:name=".activity.Services.ServicesChatAC" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.Services.ServicesActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".activity.PostUploadAVActivity" />
         <activity android:name=".activity.ImageViewActivity" />
-        <activity android:name=".activity.YourprofileActivity" />
+        <activity android:name=".activity.YourprofileActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".Authentication.LoginActivity" />
         <activity android:name=".Authentication.SignUpActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.CommentActivity" />
         <activity android:name=".activity.EditProfileActivity" />
-        <activity android:name=".SplashActivity.SplashActivity">
+        <activity android:name=".SplashActivity.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,6 +42,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.IncubationActivity" />
+
+        <service android:name=".fcm.MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true"
+            tools:targetApi="n">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

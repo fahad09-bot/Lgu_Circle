@@ -5,6 +5,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.codesses.lgucircle.Utils.Constants;
+import com.codesses.lgucircle.activity.Services.ConversationAC;
 import com.codesses.lgucircle.model.Chat;
 import com.codesses.lgucircle.Interfaces.OnConversationClick;
 import com.codesses.lgucircle.Utils.FirebaseRef;
@@ -36,8 +38,47 @@ public class ConversationVH extends RecyclerView.ViewHolder {
         } else {
             userItemBinding.type.setVisibility(View.GONE);
         }
+        if (Constants.isChatPicked && user.isPicked())
+            userItemBinding.checked.setVisibility(View.VISIBLE);
+
         Picasso.get().load(user.getProfile_img()).into(userItemBinding.userImage);
-        itemView.setOnClickListener(v -> onConversationClick.onClick(user.getU_id()));
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!Constants.isChatPicked || Constants.selectedUsers.equals(0)) {
+                    Constants.isChatPicked = false;
+                    onConversationClick.onClick(user.getU_id());
+                } else if (user.isPicked()){
+                    userItemBinding.checked.setVisibility(View.GONE);
+                    user.setPicked(false);
+                    Constants.selectedUsers -= 1;
+                    if (Constants.selectedUsers.equals(0))
+                    {
+                        ConversationAC.imageView.setVisibility(View.GONE);
+                    }
+                }
+                else
+                {
+                    userItemBinding.checked.setVisibility(View.VISIBLE);
+                    user.setPicked(true);
+                    Constants.selectedUsers += 1;
+                }
+            }
+        });
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!Constants.isChatPicked) {
+                    Constants.isChatPicked = true;
+                    userItemBinding.checked.setVisibility(View.VISIBLE);
+                    user.setPicked(true);
+                    Constants.selectedUsers = 1;
+                    onConversationClick.longClick();
+                    return true;
+                }
+                return false;
+            }
+        });
         getLastMessage(user);
     }
 

@@ -4,21 +4,21 @@
     android:viewportWidth="32"
     android:viewportHeight="40">
   <path
-      android:fillColor="@color/dim_grey"
+      android:fillColor="@color/steel"
       android:pathData="M3,8H6V9a3.0033,3.0033 0,0 0,3 3h2a3.0033,3.0033 0,0 0,3 -3V5a3.0033,3.0033 0,0 0,-3 -3H9A3.0033,3.0033 0,0 0,6 5V6H3A1,1 0,0 0,3 8Z"/>
   <path
-      android:fillColor="@color/dim_grey"
+      android:fillColor="@color/steel"
       android:pathData="M17,8H29a1,1 0,0 0,0 -2H17a1,1 0,0 0,0 2Z"/>
   <path
-      android:fillColor="@color/dim_grey"
+      android:fillColor="@color/steel"
       android:pathData="M29,15H26V14a3.0033,3.0033 0,0 0,-3 -3H21a3.0033,3.0033 0,0 0,-3 3v4a3.0033,3.0033 0,0 0,3 3h2a3.0033,3.0033 0,0 0,3 -3V17h3a1,1 0,0 0,0 -2Z"/>
   <path
-      android:fillColor="@color/dim_grey"
+      android:fillColor="@color/steel"
       android:pathData="M15,15H3a1,1 0,0 0,0 2H15a1,1 0,0 0,0 -2Z"/>
   <path
-      android:fillColor="@color/dim_grey"
+      android:fillColor="@color/steel"
       android:pathData="M11,20H9a3.0033,3.0033 0,0 0,-3 3v1H3a1,1 0,0 0,0 2H6v1a3.0033,3.0033 0,0 0,3 3h2a3.0033,3.0033 0,0 0,3 -3V23A3.0033,3.0033 0,0 0,11 20Z"/>
   <path
-      android:fillColor="@color/dim_grey"
+      android:fillColor="@color/steel"
       android:pathData="M29,24H17a1,1 0,0 0,0 2H29a1,1 0,0 0,0 -2Z"/>
 </vector>

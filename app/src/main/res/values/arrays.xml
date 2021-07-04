@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--    TODO: Sports Interest -->
+    <array name="years">
+        <item>@string/choose_year</item>
+        <item>"2013"</item>
+        <item>"2014"</item>
+        <item>"2015"</item>
+        <item>"2016"</item>
+        <item>"2017"</item>
+        <item>"2018"</item>
+        <item>"2019"</item>
+        <item>"2020"</item>
+        <item>"2021"</item>
+    </array>
+    <array name="sessions">
+        <item>@string/choose_session</item>
+        <item>Fa</item>
+        <item>Sp</item>
+    </array>
+
+    <array name="programs">
+        <item>@string/choose_program</item>
+        <item>BS</item>
+        <item>MS</item>
+    </array>
+
+    <array name="departments">
+        <item>@string/choose_department</item>
+        <item>IT</item>
+        <item>CS</item>
+        <item>SE</item>
+        <item>Maths</item>
+        <item>Phys</item>
+        <item>Chem</item>
+        <item>Urdu</item>
+        <item>Stat</item>
+        <item>Eng</item>
+        <item>BT</item>
+    </array>
+
+</resources>

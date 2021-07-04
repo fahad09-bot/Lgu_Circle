@@ -1,7 +1,13 @@
 package com.codesses.lgucircle.Fragments;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,26 +18,37 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.codesses.lgucircle.Authentication.LoginActivity;
 import com.codesses.lgucircle.Dialogs.ChangePassDialog;
+import com.codesses.lgucircle.Dialogs.ProgressDialog;
 import com.codesses.lgucircle.R;
+import com.codesses.lgucircle.Utils.ApplicationUtils;
 import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.activity.IncubationActivity;
+import com.codesses.lgucircle.activity.MainActivity;
 import com.codesses.lgucircle.activity.Services.ServicesActivity;
 import com.codesses.lgucircle.activity.YourprofileActivity;
+import com.codesses.lgucircle.databinding.FragmentSettingBinding;
 import com.codesses.lgucircle.model.User;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -45,6 +62,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
     //    TODO: Context
     FragmentActivity mContext;
+    FragmentSettingBinding binding;
 
     //    TODO: Widgets
     @BindView(R.id.profile_img)
@@ -70,6 +88,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
 
     private Intent intent;
+    private Uri selectedImg;
 
     public SettingFragment() {
         // Required empty public constructor
@@ -103,31 +122,35 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // TODO: Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_setting, container, false);
+        binding = FragmentSettingBinding.bind(inflater.inflate(R.layout.fragment_setting, container, false));
 
         mContext = getActivity();
-        ButterKnife.bind(this, view);
+        ButterKnife.bind(this, binding.getRoot());
 
         Log.d("LifeCycle", "onCreateView");
 
 
 //        TODO: Click Listeners
-        Your_Profile_Cv.setOnClickListener(this);
-        Change_Pass_Cv.setOnClickListener(this);
-        Contact_Us_Cv.setOnClickListener(this);
-        About_Cv.setOnClickListener(this);
-        Sign_Out_Cv.setOnClickListener(this);
-        Incubation_Cv.setOnClickListener(this);
-        Freelance_Cv.setOnClickListener(this);
+        binding.yourProfileCv.setOnClickListener(this);
+        binding.changePassCv.setOnClickListener(this);
+        binding.contactUsCv.setOnClickListener(this);
+        binding.aboutCv.setOnClickListener(this);
+        binding.signOutCv.setOnClickListener(this);
+        binding.incubationCv.setOnClickListener(this);
+        binding.freelanceCv.setOnClickListener(this);
+        binding.add.setOnClickListener(this);
 
 
-        return view;
+        return binding.getRoot();
     }
 
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.add:
+                galleryPermission();
+                break;
             case R.id.your_profile_cv:
                 intent = new Intent(mContext, YourprofileActivity.class);
                 intent.putExtra(Constants.USER_ID, FirebaseRef.getUserId());
@@ -147,11 +170,20 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.sign_out_cv:
-                FirebaseRef.getAuth().signOut();
-                intent = new Intent(getActivity(), LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                getActivity().finish();
-                startActivity(intent);
+                new AlertDialog.Builder(mContext)
+                        .setMessage("Are you sure you want to sign out?")
+                        .setNegativeButton(android.R.string.no, null)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                FirebaseRef.getAuth().signOut();
+                                intent = new Intent(getActivity(), LoginActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                getActivity().finish();
+                                startActivity(intent);
+                            }
+                        }).create().show();
+
                 break;
 
             case R.id.incubation_cv:
@@ -163,6 +195,20 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 intent = new Intent(mContext, ServicesActivity.class);
                 startActivity(intent);
                 break;
+        }
+    }
+
+    private void galleryPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (mContext.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_DENIED) {
+                String[] permission = {Manifest.permission.READ_EXTERNAL_STORAGE};
+                requestPermissions(permission, ApplicationUtils.IMAGE_PERMISSION_CODE);
+            } else {
+                galleryImagePick();
+            }
+        } else {
+            galleryImagePick();
         }
     }
 
@@ -249,4 +295,76 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 });
 
     }
+
+    private void galleryImagePick() {
+
+        Intent intent = new Intent();
+
+        intent.setAction(Intent.ACTION_PICK);
+
+        intent.setType("image/*");
+
+        someActivityResultLauncher.launch(intent);
+    }
+
+    // You can do the assignment inside onAttach or onCreate, i.e, before the activity is displayed
+    ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        // There are no request codes
+                        Intent data = result.getData();
+                        selectedImg = data.getData();
+                        ProgressDialog.ShowProgressDialog(mContext, R.string.profile, R.string.uploading);
+                        uploadToStorage(data.getData());
+                    }
+                }
+            });
+
+    private void uploadToStorage(Uri data) {
+        StorageReference reference = FirebaseRef.getProfileStorage().child(FirebaseRef.getUserId());
+        UploadTask uploadTask = reference.putFile(data);
+
+        uploadTask.addOnProgressListener(taskSnapshot -> {
+
+//                Toast.makeText(PostUploadAV.this, "", Toast.LENGTH_SHORT).show();
+        }).addOnSuccessListener(taskSnapshot ->
+                reference.getDownloadUrl().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        profileUpload(task.getResult().toString());
+                        ProgressDialog.DismissProgressDialog();
+
+                    } else {
+                        ProgressDialog.DismissProgressDialog();
+                        Log.e("ERROR_TAG", task.getException().getMessage());
+                    }
+                })).addOnFailureListener(e -> {
+            ProgressDialog.DismissProgressDialog();
+            Log.e("ERROR_TAG", e.getMessage());
+        });
+
+    }
+
+    private void profileUpload(String profileImgUrl) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("profile_img", profileImgUrl);
+
+        FirebaseRef.getUserRef().child(FirebaseRef.getUserId())
+                .updateChildren(map)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(mContext, getString(R.string.profile_updated), Toast.LENGTH_SHORT).show();
+
+//                        Update user data to shared preference
+
+                    } else {
+                        Log.e("ERROR_TAG", task.getException().getMessage());
+                    }
+                    ProgressDialog.DismissProgressDialog();
+                });
+    }
+
 }

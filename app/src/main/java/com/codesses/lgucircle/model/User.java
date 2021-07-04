@@ -1,11 +1,25 @@
 package com.codesses.lgucircle.model;
 
 public class User {
-    private String date_of_birth, department,
+    private String department,
             email, first_name,
             last_name, password,
             phone, profile_img,
-            u_id, roll_no, type;
+            u_id, roll_no, type, bio = "", fcmToken;
+
+    public String getBio() {
+        return bio;
+    }
+
+    private boolean isPicked = false;
+
+    public boolean isPicked() {
+        return isPicked;
+    }
+
+    public void setPicked(boolean picked) {
+        isPicked = picked;
+    }
 
     public User() {
     }
@@ -20,10 +34,6 @@ public class User {
 
     public String getU_id() {
         return u_id;
-    }
-
-    public String getDate_of_birth() {
-        return date_of_birth;
     }
 
     public String getDepartment() {
@@ -52,5 +62,13 @@ public class User {
 
     public String getProfile_img() {
         return profile_img;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public String getFull_name() {
+        return getFirst_name() + " " + getLast_name();
     }
 }

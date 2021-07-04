@@ -4,13 +4,16 @@ package com.codesses.lgucircle.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.CheckEmptyFields;
 import com.codesses.lgucircle.Utils.FirebaseRef;
@@ -19,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.hbb20.CountryCodePicker;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,10 +48,10 @@ public class EditProfileActivity extends AppCompatActivity {
     CountryCodePicker Sp_Country_Code;
     @BindView(R.id.e_phone_no)
     EditText E_Phone_No;
+    @BindView(R.id.bio)
+    EditText Bio;
     @BindView(R.id.update_btn)
     Button Update_Btn;
-
-
 
 
     @Override
@@ -63,15 +67,13 @@ public class EditProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-
-
-
 //        TODO: Get Current Data
         getCurrentUserData();
 
 
 //        TODO: Click Listener
         Update_Btn.setOnClickListener(this::updateData);
+
     }
 
     @Override
@@ -93,8 +95,11 @@ public class EditProfileActivity extends AppCompatActivity {
                         E_FName.setText(user.getFirst_name());
                         E_LName.setText(user.getLast_name());
                         E_Email.setText(user.getEmail());
-                        E_Phone_No.setText(user.getPhone());
-
+                        E_Phone_No.setText(user.getPhone().substring(3, user.getPhone().length()));
+                        Bio.setText(user.getBio());
+//                        Sp_Country_Code.setCountryForNameCode();
+                        Sp_Country_Code.setCountryForPhoneCode(Integer.parseInt(user.getPhone().substring(1, 3)));
+//                        app:ccp_defaultNameCode="PK"
 
 
                     }
@@ -111,6 +116,7 @@ public class EditProfileActivity extends AppCompatActivity {
         String firstName = E_FName.getText().toString().trim();
         String lastName = E_LName.getText().toString().trim();
         String phoneNo = E_Phone_No.getText().toString().trim();
+        String bio = Bio.getText().toString().trim();
 
         if (CheckEmptyFields.isEditText(mContext, firstName, E_FName) &&
                 CheckEmptyFields.isEditText(mContext, lastName, E_LName) &&
@@ -118,9 +124,16 @@ public class EditProfileActivity extends AppCompatActivity {
 
             Map<String, Object> map = new HashMap<>();
 
-            map.put("first_name", firstName);
-            map.put("last_name", lastName);
-            map.put("phone_no", phoneNo);
+            if (bio.isEmpty()) {
+                map.put("first_name", firstName);
+                map.put("last_name", lastName);
+                map.put("phone_no", Sp_Country_Code.getSelectedCountryCodeWithPlus() + phoneNo);
+            } else {
+                map.put("first_name", firstName);
+                map.put("last_name", lastName);
+                map.put("phone_no", Sp_Country_Code.getSelectedCountryCodeWithPlus() + phoneNo);
+                map.put("bio", bio);
+            }
 
 
             FirebaseRef.getUserRef()

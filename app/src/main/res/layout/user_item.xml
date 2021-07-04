@@ -14,6 +14,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/user_image"
+        app:layout_constraintEnd_toEndOf="@id/user_image"
+        android:layout_marginEnd="@dimen/_2sdp"
+        android:layout_marginBottom="@dimen/_2sdp"
+        android:visibility="gone"
+        android:src="@drawable/ic_baseline_check_circle_24"
+        android:id="@+id/checked"
+        app:tint="@color/teal_700" />
+
     <LinearLayout
         android:id="@+id/linear"
         android:layout_width="0dp"

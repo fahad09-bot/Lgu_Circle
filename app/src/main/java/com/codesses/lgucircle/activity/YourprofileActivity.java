@@ -69,8 +69,8 @@ public class YourprofileActivity extends AppCompatActivity {
         else
             binding.message.setVisibility(View.VISIBLE);
 
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setIcon(R.drawable.ic_post));
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setIcon(R.drawable.ic_services));
+        binding.tabLayout.addTab(binding.tabLayout.newTab().setIcon(R.drawable.ic_newsfeed));
+        binding.tabLayout.addTab(binding.tabLayout.newTab().setIcon(R.drawable.ic_service));
 
         final ProfilePagerAdapter adapter = new ProfilePagerAdapter(
                 getSupportFragmentManager(),
@@ -144,6 +144,7 @@ public class YourprofileActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
+                        binding.bio.setText(user.getBio());
 
 
                         Picasso.get().load(user.getProfile_img()).into(binding.profileImg, new Callback() {

@@ -1,6 +1,7 @@
 package com.codesses.lgucircle.viewHolder;
 
 import android.view.View;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +13,8 @@ import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -25,8 +28,7 @@ public class EventVH extends RecyclerView.ViewHolder {
         this.binding = binding;
     }
 
-    public void onBind(Event event, OnEventImageClick onEventImageClick)
-    {
+    public void onBind(Event event, OnEventImageClick onEventImageClick) {
         if (event.getType() == 0)
             binding.image.setVisibility(View.GONE);
         else if (event.getType() == 1) {
@@ -35,14 +37,76 @@ public class EventVH extends RecyclerView.ViewHolder {
         }
         binding.eventName.setText(event.getName());
         binding.eventInfo.setText(event.getInfo());
-        SimpleDateFormat monthFormat = new SimpleDateFormat("MM");
-        String month = monthFormat.format(Date.parse(event.getDate()));
-        String day = new SimpleDateFormat("dd").format(Date.parse(event.getDate()));
-        String dayTime = new SimpleDateFormat("EE hh:mm aa").format(Date.parse(event.getDate()));
-        binding.month.setText(month);
+        String monthPattern = "MMMM", dayPattern = "dd", dayTimePattern = "EE hh:mm aa";
+        SimpleDateFormat monthFormat = new SimpleDateFormat(monthPattern);
+
+        String month = null;
+        String day = null;
+        String dayTime = null;
+        String eventDate = event.getDate();
+
+        month = monthFormat.format(Date.parse(eventDate));
+        day = new SimpleDateFormat(dayPattern).format(Date.parse(eventDate));
+        dayTime = new SimpleDateFormat(dayTimePattern).format(Date.parse(eventDate));
+        String shortMonth = "";
+        switch (month.toLowerCase()) {
+            case "january":
+                shortMonth = "jan";
+                break;
+
+            case "february":
+                shortMonth = "feb";
+                break;
+
+            case "march":
+                shortMonth = "mar";
+                break;
+
+            case "April":
+                shortMonth = "apr";
+                break;
+
+            case "may":
+                shortMonth = "may";
+                break;
+
+            case "june":
+                shortMonth = "jun";
+                break;
+
+
+            case "july":
+                shortMonth = "jul";
+                break;
+
+            case "august":
+                shortMonth = "aug";
+                break;
+
+            case "september":
+                shortMonth = "sep";
+                break;
+
+
+            case "october":
+                shortMonth = "oct";
+                break;
+
+            case "november":
+                shortMonth = "nov";
+                break;
+
+            case "december":
+                shortMonth = "dec";
+                break;
+
+
+        }
+        binding.month.setText(shortMonth);
         binding.day.setText(day);
 
         binding.dayTime.setText(dayTime);
+
 
         binding.department.setText(event.getDepartment());
 

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.codesses.lgucircle.Interfaces.OnImageClick;
 import com.codesses.lgucircle.R;
+import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.model.Chat;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,7 +51,22 @@ public class MessageAdapter extends RecyclerView.Adapter<ViewHolderMessage> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolderMessage holder, final int position) {
         Chat chat = mChat.get(position);
-        holder.onBind(chat, onImageClick);
+        holder.onBind(chat, onImageClick, mContext);
+//        holder.setIsRecyclable(false);
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!Constants.isMessagePicked) {
+                    Constants.isMessagePicked = true;
+                    Constants.selectedMessages = 1;
+                    holder.constraintLayout.setBackgroundColor(mContext.getResources().getColor(R.color.transparent));
+                    chat.setPicked(true);
+                    onImageClick.onLongClick();
+                    return true;
+                }
+                return false;
+            }
+        });
 
 
     }
@@ -69,4 +85,20 @@ public class MessageAdapter extends RecyclerView.Adapter<ViewHolderMessage> {
             return MSG_TYPE_LEFT;
         }
     }
+
+//    @Override
+//    public void onViewAttachedToWindow(final ViewHolderMessage holder) {
+//        if (holder instanceof ViewHolderMessage) {
+//            holder.setIsRecyclable(false);
+//        }
+//        super.onViewAttachedToWindow(holder);
+//    }
+//
+//    @Override
+//    public void onViewDetachedFromWindow(final ViewHolderMessage holder) {
+//        if (holder instanceof ViewHolderMessage){
+//            holder.setIsRecyclable(true);
+//        }
+//        super.onViewDetachedFromWindow(holder);
+//    }
 }

@@ -1,5 +1,6 @@
 package com.codesses.lgucircle.activity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,11 +9,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.activity.Services.ConversationAC;
 import com.codesses.lgucircle.databinding.IncubationBinding;
 import com.codesses.lgucircle.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -73,6 +76,22 @@ public class IncubationActivity extends AppCompatActivity {
 
     private void registerIdea(View view) {
 
+        new AlertDialog
+                .Builder(mContext)
+                .setTitle(getString(R.string.register_idea))
+                .setMessage(getString(R.string.idea_confirmation))
+                .setPositiveButton("DONE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sendDataToFirebase();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("CANCEL", null)
+                .show();
+    }
+
+    private void sendDataToFirebase() {
         String pitch = binding.pitch.getText().toString();
 
         if (!TextUtils.isEmpty(pitch)) {
@@ -96,9 +115,8 @@ public class IncubationActivity extends AppCompatActivity {
                             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
-
         }
+
+
     }
-
-
 }

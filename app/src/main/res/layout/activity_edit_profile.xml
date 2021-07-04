@@ -12,11 +12,13 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/Green"
+        android:background="@drawable/gradient_shape"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        app:navigationIcon="@drawable/ic_vector_back_arrow"
+        app:title="@string/edit_profile"
+        app:titleTextColor="@color/white" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -34,8 +36,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_margin="@dimen/_10sdp"
+                android:background="@drawable/edittext_background"
+                android:paddingHorizontal="@dimen/_20sdp"
+                android:paddingVertical="@dimen/_5sdp"
                 android:hint="@string/f_name"
-                android:padding="@dimen/_5sdp"
+                android:fontFamily="@font/basiercircle_regular"
+                android:textSize="@dimen/_12ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -45,8 +51,12 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_margin="@dimen/_10sdp"
+                android:fontFamily="@font/basiercircle_regular"
+                android:textSize="@dimen/_12ssp"
+                android:background="@drawable/edittext_background"
+                android:paddingHorizontal="@dimen/_20sdp"
+                android:paddingVertical="@dimen/_5sdp"
                 android:hint="@string/l_name"
-                android:padding="@dimen/_5sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/e_fname" />
@@ -59,47 +69,71 @@
                 android:layout_margin="@dimen/_10sdp"
                 android:gravity="center_vertical"
                 android:hint="@string/email"
+                android:fontFamily="@font/basiercircle_regular"
+                android:textSize="@dimen/_12ssp"
                 android:padding="@dimen/_5sdp"
                 app:layout_constraintTop_toBottomOf="@id/e_lname" />
 
 
-            <com.hbb20.CountryCodePicker
-                android:id="@+id/sp_country_code"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/codePickerCv"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/_10sdp"
-                android:gravity="center_vertical"
-                android:visibility="gone"
-                app:ccpDialog_showCloseIcon="true"
-                app:ccp_defaultNameCode="PK"
+                android:layout_height="0dp"
+                app:cardCornerRadius="@dimen/_25sdp"
+                app:cardElevation="0dp"
                 app:layout_constraintBottom_toBottomOf="@id/e_phone_no"
                 app:layout_constraintEnd_toStartOf="@id/e_phone_no"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/e_email"
-                app:layout_constraintTop_toTopOf="@id/e_phone_no" />
+                app:layout_constraintStart_toStartOf="@id/e_email"
+                app:layout_constraintTop_toTopOf="@id/e_phone_no">
+
+                <com.hbb20.CountryCodePicker
+                    android:id="@+id/sp_country_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="visible"
+                    app:ccpDialog_showCloseIcon="true"
+                    app:ccp_textSize="@dimen/_12ssp"
+                    android:paddingHorizontal="@dimen/_5sdp" />
+            </androidx.cardview.widget.CardView>
+
 
             <EditText
                 android:id="@+id/e_phone_no"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_margin="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/edittext_background"
                 android:hint="@string/phone_no"
                 android:inputType="phone"
-                android:padding="@dimen/_5sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/sp_country_code"
+                android:fontFamily="@font/basiercircle_regular"
+                android:textSize="@dimen/_12ssp"
+                android:maxLength="11"
+                android:paddingHorizontal="@dimen/_20sdp"
+                android:paddingVertical="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                app:layout_constraintEnd_toEndOf="@id/e_email"
+                app:layout_constraintStart_toEndOf="@id/codePickerCv"
                 app:layout_constraintTop_toBottomOf="@id/e_email" />
 
-            <FrameLayout
-                android:id="@+id/your_sports_layout"
-                android:layout_width="match_parent"
+            <EditText
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
-                app:layout_constraintTop_toBottomOf="@id/e_phone_no">
-
-
-            </FrameLayout>
+                android:maxHeight="@dimen/_200sdp"
+                app:layout_constraintTop_toBottomOf="@id/codePickerCv"
+                app:layout_constraintStart_toStartOf="@id/codePickerCv"
+                app:layout_constraintEnd_toEndOf="@id/e_phone_no"
+                android:background="@drawable/edittext_background"
+                android:hint="Bio"
+                android:fontFamily="@font/basiercircle_regular"
+                android:textSize="@dimen/_12ssp"
+                android:paddingHorizontal="@dimen/_20sdp"
+                android:paddingVertical="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:minHeight="@dimen/_40sdp"
+                android:id="@+id/bio"
+                />
 
 
             <Button
@@ -111,11 +145,13 @@
                 android:minWidth="@dimen/_90sdp"
                 android:minHeight="?attr/actionBarSize"
                 android:text="@string/update"
+                android:fontFamily="@font/basiercircle_regular"
+                android:textSize="@dimen/_12ssp"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/your_sports_layout" />
+                app:layout_constraintTop_toBottomOf="@id/bio" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,7 +12,7 @@
     <color name="dim_green">#65CC69</color>
     <color name="hyper_link">#0000EE</color>
     <color name="red">#C61C1C</color>
-    <color name="Green">#008000</color>
+    <color name="Green">#1C7716</color>
     <color name="dark_green">#006400</color>
     <color name="Light_grey">#D3D3D3</color>
     <color name="Charcoal">#36454f </color>
@@ -22,6 +22,12 @@
     <color name="imageBorderColor">#E01E7A</color>
     <color name="miniTitle">#2A2E43</color>
     <color name="grey">#979696</color>
-    <color name="dim_grey">#616f76</color>
-    <color name="light_grey">#707070</color>
+    <color name="grey0">#f7f7f8</color>
+    <color name="grey1">#979696</color>
+    <color name="greyBlack">#333333</color>
+    <color name="steel">#7b8497</color>
+    <color name="navy">#001236</color>
+    <color name="paleLilac">#e6e6e9</color>
+    <color name="colorAquaMarine">#3ed2c9</color>
+    <color name="transparent">#2065CC69</color>
 </resources>

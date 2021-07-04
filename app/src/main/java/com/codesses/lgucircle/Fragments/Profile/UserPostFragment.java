@@ -10,16 +10,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.codesses.lgucircle.Adapters.UserPostAdapter;
+import com.codesses.lgucircle.Interfaces.OnItemClick;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.databinding.FragmentUserPostBinding;
 import com.codesses.lgucircle.model.Post;
 import com.codesses.lgucircle.model.Service;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -56,6 +62,9 @@ public class UserPostFragment extends Fragment {
         this.userId = userId;
     }
 
+    public UserPostFragment() {
+        // Required empty public constructor
+    }
 
 
     @Override
@@ -83,7 +92,7 @@ public class UserPostFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                int position = viewHolder.getBindingAdapterPosition();
                 deletePost(position);
             }
         });
@@ -96,24 +105,19 @@ public class UserPostFragment extends Fragment {
     private void deletePost(int position) {
         FirebaseRef
                 .getPostsRef()
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .child(postList.get(position).getP_id())
+                .removeValue()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            Post post = dataSnapshot.getValue(Post.class);
-                            assert post != null;
-                            if (post.getP_id().equals(postList.get(position).getP_id()) && post.getPosted_by().equals(FirebaseRef.getUserId())) {
-                                dataSnapshot.getRef().removeValue();
-                            }
-
-                        }
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        Toast.makeText(mContext, "Successful", Toast.LENGTH_SHORT).show();
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                        Log.e("OnCancelled", error.getMessage());
-                    }
-                });
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull @NotNull Exception e) {
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
@@ -131,7 +135,17 @@ public class UserPostFragment extends Fragment {
                                 }
                             }
                             Log.e("POSTSUSER", String.valueOf(postList.size()));
-                            userPostAdapter = new UserPostAdapter(mContext, postList);
+                            userPostAdapter = new UserPostAdapter(mContext, postList, new OnItemClick() {
+                                @Override
+                                public void onClick(String id) {
+
+                                }
+
+                                @Override
+                                public void onMenuClick(View view, String id) {
+                                    showMenu(view, id);
+                                }
+                            });
                             binding.postsRecycler.setAdapter(userPostAdapter);
 
                         }
@@ -143,4 +157,36 @@ public class UserPostFragment extends Fragment {
                     }
                 });
     }
+
+    private void showMenu(View v, String id) {
+        PopupMenu popup = new PopupMenu(mContext, v);
+
+        // This activity implements OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.delete:
+                        FirebaseRef
+                                .getPostsRef()
+                                .child(id)
+                                .removeValue()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(mContext, "Successful", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                        break;
+
+                }
+                return false;
+            }
+        });
+        popup.inflate(R.menu.post_menu);
+        popup.show();
+    }
+
 }

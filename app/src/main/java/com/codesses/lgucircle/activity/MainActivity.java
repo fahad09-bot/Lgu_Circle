@@ -1,8 +1,10 @@
 package com.codesses.lgucircle.activity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -37,13 +39,16 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.message)
     ImageView Message_Image;
 
+    AppCompatActivity mContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        Tab_Layout.addTab(Tab_Layout.newTab().setIcon(R.drawable.ic_feed));
+        Tab_Layout.addTab(Tab_Layout.newTab().setIcon(R.drawable.ic_newsfeed));
         Tab_Layout.addTab(Tab_Layout.newTab().setIcon(R.drawable.ic_event));
         Tab_Layout.addTab(Tab_Layout.newTab().setIcon(R.drawable.ic_notification));
         Tab_Layout.addTab(Tab_Layout.newTab().setIcon(R.drawable.ic_setting));
@@ -73,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             public void onTabUnselected(TabLayout.Tab tab) {
                 Tab_Layout.getTabAt(tab.getPosition()).getIcon()
                         .setColorFilter(
-                                getResources().getColor(R.color.dim_grey), PorterDuff.Mode.SRC_IN);
+                                getResources().getColor(R.color.steel), PorterDuff.Mode.SRC_IN);
             }
 
             @Override
@@ -99,4 +104,16 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to exit?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        MainActivity.super.onBackPressed();
+                    }
+                }).create().show();
+    }
 }

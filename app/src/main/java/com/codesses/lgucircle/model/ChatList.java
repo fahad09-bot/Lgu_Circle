@@ -2,6 +2,7 @@ package com.codesses.lgucircle.model;
 
 public class ChatList {
     public String id;
+    public boolean isPicked;
 
     public ChatList() {
     }

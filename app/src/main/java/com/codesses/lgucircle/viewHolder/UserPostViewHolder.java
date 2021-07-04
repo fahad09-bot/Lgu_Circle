@@ -8,12 +8,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.codesses.lgucircle.Interfaces.OnItemClick;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.activity.CommentActivity;
@@ -26,9 +28,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.concurrent.TimeUnit;
+
 public class UserPostViewHolder extends RecyclerView.ViewHolder {
     private UserFeedItemLayoutBinding binding;
     private Context mContext;
+    String timeAgo;
 
     public UserPostViewHolder(@NonNull UserFeedItemLayoutBinding binding) {
         super(binding.getRoot());
@@ -36,7 +41,7 @@ public class UserPostViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    public void bind(Context context, Post model) {
+    public void bind(Context context, Post model, OnItemClick onItemClick) {
         mContext = context;
         getUserInfo(model.getPosted_by());
 
@@ -71,6 +76,14 @@ public class UserPostViewHolder extends RecyclerView.ViewHolder {
             mContext.startActivity(intent, options.toBundle());
         });
 
+        binding.options.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClick.onMenuClick(v, model.getP_id());
+            }
+        });
+
+
 //         Opinion
         binding.comment.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, CommentActivity.class);
@@ -78,6 +91,7 @@ public class UserPostViewHolder extends RecyclerView.ViewHolder {
             mContext.startActivity(intent);
         });
 
+        TimeAgoHandle(model.getTimestamp(), binding.timestamp);
     }
 
 
@@ -104,5 +118,28 @@ public class UserPostViewHolder extends RecyclerView.ViewHolder {
 
                     }
                 });
+    }
+
+    public void TimeAgoHandle(long time, TextView timestamp) {
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - time);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - time);
+        long hours = TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis() - time);
+        long days = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - time);
+
+
+        if (seconds < 60) {
+            timeAgo = "Just now";
+        } else if (minutes < 60) {
+            timeAgo = minutes + "m";
+        } else if (hours < 24) {
+            timeAgo = hours + "hr";
+        } else if (days % 7 == 0) {
+            long week = days / 7;
+            timeAgo = week + "w";
+        } else {
+            timeAgo = days + "d";
+        }
+        timestamp.setText(timeAgo);
+
     }
 }

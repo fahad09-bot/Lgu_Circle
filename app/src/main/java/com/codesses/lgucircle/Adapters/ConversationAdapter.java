@@ -23,6 +23,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationVH> {
     Context mContext;
     OnConversationClick onConversationClick;
 
+
     public ConversationAdapter(List<User> userList, Context mContext, OnConversationClick onConversationClick) {
         this.userList = userList;
         this.mContext = mContext;

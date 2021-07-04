@@ -30,7 +30,7 @@
 
             <TextView
                 android:id="@+id/status"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginTop="@dimen/_5sdp"
@@ -38,6 +38,8 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12ssp"
                 android:visibility="visible"
+                android:layout_marginEnd="@dimen/_5sdp"
+                app:layout_constraintEnd_toStartOf="@id/options"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/post_image" />
 
@@ -46,27 +48,36 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/_20sdp"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
                 android:background="?android:selectableItemBackground"
-                android:padding="@dimen/_3sdp"
                 android:text="Fahad"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_12ssp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@id/status"
                 app:layout_constraintTop_toBottomOf="@id/status" />
 
             <TextView
                 android:id="@+id/timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_3sdp"
                 android:text="2 min ago"
                 android:textSize="@dimen/_10ssp"
                 app:layout_constraintStart_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/username"
                 app:layout_constraintTop_toBottomOf="@+id/username" />
+
+            <ImageView
+                android:id="@+id/options"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_20sdp"
+                android:src="@drawable/ic_options"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/comment"
+                app:layout_constraintTop_toTopOf="@id/status"
+                 />
 
 
             <ImageView
@@ -78,8 +89,9 @@
                 android:gravity="center"
                 android:padding="@dimen/_3sdp"
                 android:src="@drawable/ic_comment"
+                app:layout_constraintBottom_toBottomOf="@id/timestamp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/username" />
+                app:layout_constraintTop_toTopOf="@id/timestamp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,7 +1,10 @@
 package com.codesses.lgucircle.viewHolder;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,11 +20,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.concurrent.TimeUnit;
+
 import io.github.ponnamkarthik.richlinkpreview.ViewListener;
 
 public class ServiceVH extends RecyclerView.ViewHolder {
 
     ServicesFeedItemBinding binding;
+    String timeAgo;
     public ServiceVH(@NonNull ServicesFeedItemBinding binding) {
         super(binding.getRoot());
         this.binding = binding;
@@ -29,6 +35,7 @@ public class ServiceVH extends RecyclerView.ViewHolder {
 
     public void onBind(Service service, Context mContext, OnItemClick onItemClick)
     {
+        TimeAgoHandle(service.getTime_stamp(), binding.timestamp);
         FirebaseRef.getUserRef().child(service.getPosted_by()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -40,6 +47,13 @@ public class ServiceVH extends RecyclerView.ViewHolder {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+
+        binding.options.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClick.onMenuClick(v, service.getS_id());
             }
         });
 
@@ -59,15 +73,16 @@ public class ServiceVH extends RecyclerView.ViewHolder {
 
                 @Override
                 public void onError(Exception e) {
-
+                    Log.e("ERROR_TAG", e.getMessage());
                 }
             });
-            binding.timestamp.setText(CurrentDateAndTime.currentDate().equals(service.getTime_stamp()) ?
-                    mContext.getString(R.string.today) : String.valueOf(service.getTime_stamp()));
         }
 
-        if (FirebaseRef.getCurrentUserId().equals(service.getPosted_by()))
-            binding.comment.setVisibility(View.GONE);
+        if (FirebaseRef.getCurrentUserId().equals(service.getPosted_by())) {
+            binding.comment.setVisibility(View.INVISIBLE);
+            binding.comment.setEnabled(false);
+
+        }
         else
             binding.comment.setVisibility(View.VISIBLE);
         binding.comment.setOnClickListener(new View.OnClickListener() {
@@ -78,4 +93,29 @@ public class ServiceVH extends RecyclerView.ViewHolder {
         });
 
     }
+
+
+    public void TimeAgoHandle(long time, TextView timestamp) {
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - time);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - time);
+        long hours = TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis() - time);
+        long days = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - time);
+
+
+        if (seconds < 60) {
+            timeAgo = "Just now";
+        } else if (minutes < 60) {
+            timeAgo = minutes + "m";
+        } else if (hours < 24) {
+            timeAgo = hours + "hr";
+        } else if (days % 7 == 0) {
+            long week = days / 7;
+            timeAgo = week + "w";
+        } else {
+            timeAgo = days + "d";
+        }
+        timestamp.setText(timeAgo);
+
+    }
+
 }
