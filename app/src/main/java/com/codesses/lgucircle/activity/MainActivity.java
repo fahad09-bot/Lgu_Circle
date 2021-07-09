@@ -1,30 +1,30 @@
 package com.codesses.lgucircle.activity;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.codesses.lgucircle.Adapters.UserTabsAdapter;
 import com.codesses.lgucircle.Dialogs.UserSearchDialog;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.activity.Services.ConversationAC;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.content.ContentValues.TAG;
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         mContext = this;
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        subscribeToChannel();
         Tab_Layout.addTab(Tab_Layout.newTab().setIcon(R.drawable.ic_newsfeed));
         Tab_Layout.addTab(Tab_Layout.newTab().setIcon(R.drawable.ic_event));
         Tab_Layout.addTab(Tab_Layout.newTab().setIcon(R.drawable.ic_notification));
@@ -85,11 +85,11 @@ public class MainActivity extends AppCompatActivity {
             public void onTabReselected(TabLayout.Tab tab) {
             }
 
-            });
+        });
 
         Message_Image.setOnClickListener(this::startConversation);
         Search_Image.setOnClickListener(this::showSearchDialog);
-        }
+    }
 
     private void showSearchDialog(View view) {
         UserSearchDialog userSearchDialog = new UserSearchDialog("MainActivity");
@@ -97,23 +97,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     private void startConversation(View view) {
         Intent intent = new Intent(MainActivity.this, ConversationAC.class);
         startActivity(intent);
     }
 
-    @Override
-    public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setMessage("Are you sure you want to exit?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        MainActivity.super.onBackPressed();
+    private void subscribeToChannel() {
+        FirebaseMessaging.getInstance().subscribeToTopic("events")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = getString(R.string.msg_subscribed);
+                        if (!task.isSuccessful()) {
+                            msg = getString(R.string.msg_subscribe_failed);
+                        }
+                        Log.d(TAG, msg);
+                        Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
                     }
-                }).create().show();
+                });
     }
 }

@@ -1,21 +1,21 @@
 package com.codesses.lgucircle.model;
 
 public class ChatList {
-    public String id;
+    public String c_id;
     public boolean isPicked;
 
     public ChatList() {
     }
 
     public ChatList(String id) {
-        this.id = id;
+        this.c_id = id;
     }
 
     public String getId() {
-        return id;
+        return c_id;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.c_id = id;
     }
 }

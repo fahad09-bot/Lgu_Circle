@@ -1,10 +1,5 @@
 package com.codesses.lgucircle.activity.Services;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,25 +9,30 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.codesses.lgucircle.Singleton.VolleySingleton;
-import com.codesses.lgucircle.Utils.ApplicationUtils;
-import com.codesses.lgucircle.Utils.SharedPrefManager;
-import com.codesses.lgucircle.Enums.SharedPrefKey;
-import com.codesses.lgucircle.model.Chat;
 import com.codesses.lgucircle.Adapters.MessageAdapter;
 import com.codesses.lgucircle.Dialogs.MenuDialog;
 import com.codesses.lgucircle.Dialogs.MsgImgUpDialog;
 import com.codesses.lgucircle.Dialogs.ProgressDialog;
+import com.codesses.lgucircle.Enums.SharedPrefKey;
 import com.codesses.lgucircle.Interfaces.OnImageClick;
 import com.codesses.lgucircle.Interfaces.SendData;
 import com.codesses.lgucircle.R;
+import com.codesses.lgucircle.Singleton.VolleySingleton;
+import com.codesses.lgucircle.Utils.ApplicationUtils;
 import com.codesses.lgucircle.Utils.CheckEmptyFields;
 import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.Utils.SharedPrefManager;
 import com.codesses.lgucircle.activity.ImageViewActivity;
 import com.codesses.lgucircle.databinding.ActivityServicesChatBinding;
+import com.codesses.lgucircle.model.Chat;
 import com.codesses.lgucircle.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -45,6 +45,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -67,6 +68,7 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
     List<Chat> messageList = new ArrayList<>();
     Uri selectedImage;
     String imageUrl, fcmToken = "";
+    int type = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,17 +202,19 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
             }
         });
 
-        FirebaseRef.getUserRef().child(FirebaseRef.getCurrentUserId()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                currentUser = snapshot.getValue(User.class);
-            }
-
-            @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
-            }
-        });
+        Gson gson = new Gson();
+        currentUser = gson.fromJson(SharedPrefManager.getInstance(mContext).getSharedData(SharedPrefKey.USER), User.class);
+//        FirebaseRef.getUserRef().child(FirebaseRef.getCurrentUserId()).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//                currentUser = snapshot.getValue(User.class);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//
+//            }
+//        });
     }
 
     private void sendMessage(View view) {
@@ -218,13 +222,13 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
         ProgressDialog.ShowProgressDialog(mContext, R.string.sending, R.string.please_wait);
         if (CheckEmptyFields.isEditText(mContext, binding.message.getText().toString(), binding.message)) {
             String messageId = FirebaseRef.getMessageRef().push().getKey();
-
+            message = binding.message.getText().toString().trim();
             HashMap<String, Object> message = new HashMap<>();
             message.put("m_id", messageId);
             message.put("sender_id", FirebaseRef.getCurrentUserId());
             message.put("receiver_id", userId);
             message.put("type", 0);
-            message.put("message", binding.message.getText().toString().trim());
+            message.put("message", this.message);
             message.put("timestamp", String.valueOf(System.currentTimeMillis()));
 
             FirebaseRef
@@ -255,7 +259,7 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
                         @Override
                         public void onComplete(@NonNull @NotNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                sendNotification();
+                                sendNotification(0);
                             }
                         }
                     })
@@ -272,7 +276,7 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
 
     }
 
-    private void sendNotification() {
+    private void sendNotification(int type) {
         String nId = FirebaseRef.getNotificationRef().push().getKey();
 
         Map<String, Object> map = new HashMap<>();
@@ -282,6 +286,11 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
         map.put("type", 0);
         map.put("sent_by", FirebaseRef.getUserId());
         map.put("sent_to", userId);
+        map.put("title", currentUser.getFull_name());
+        if (type == 0 || type == 2)
+            map.put("message", message);
+        else
+            map.put("message", "you have new message");
         map.put("is_read", 0);
 
         assert nId != null;
@@ -351,9 +360,11 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
         msg.put("sender_id", FirebaseRef.getCurrentUserId());
         msg.put("receiver_id", userId);
         msg.put("messageImage", imageUrl);
-        if (TextUtils.isEmpty(this.message))
+        if (TextUtils.isEmpty(this.message)) {
+            type = 1;
             msg.put("type", 1);
-        else {
+        } else {
+            type = 2;
             msg.put("type", 2);
             msg.put("message", this.message.trim());
         }
@@ -387,7 +398,7 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
                     @Override
                     public void onComplete(@NonNull @NotNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            sendNotification();
+                            sendNotification(type);
                         }
                     }
                 })
@@ -440,7 +451,7 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
-                    chatRef.child("id").setValue(userId);
+                    chatRef.child("c_id").setValue(userId);
                 }
             }
 

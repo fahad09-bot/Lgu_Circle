@@ -129,6 +129,11 @@
     <string name="shared_preference">Shared_Preference</string>
     <string name="new_message">you have new message</string>
     <string name="default_notification_channel_id">My Notifications</string>
+    <string name="dummy_name">Fahad Mughal</string>
+    <string name="dummy_text">New message here</string>
+    <string name="msg_subscribed">subscribed</string>
+    <string name="msg_subscribe_failed">subscription failed</string>
+    <string name="notification">Notification</string>
 
 
 </resources>

@@ -18,8 +18,10 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.codesses.lgucircle.Adapters.AuthorityPagerAdapter;
 import com.codesses.lgucircle.Adapters.ProfilePagerAdapter;
@@ -27,8 +29,11 @@ import com.codesses.lgucircle.Authentication.LoginActivity;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.databinding.ActivityAuthorityBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +41,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
+import static android.content.ContentValues.TAG;
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
 public class AuthorityAC extends AppCompatActivity {
@@ -62,8 +68,24 @@ public class AuthorityAC extends AppCompatActivity {
         setBottomNavigationListener();
 
         binding.logout.setOnClickListener(this::logout);
+        subscribeToChannel();
 
 //        setDestinationListener();
+    }
+
+    private void subscribeToChannel() {
+        FirebaseMessaging.getInstance().subscribeToTopic("ideas")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = getString(R.string.msg_subscribed);
+                        if (!task.isSuccessful()) {
+                            msg = getString(R.string.msg_subscribe_failed);
+                        }
+                        Log.d(TAG, msg);
+                        Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void logout(View view) {
@@ -103,6 +125,9 @@ public class AuthorityAC extends AppCompatActivity {
                         break;
                     case R.id.ideasNav:
                         setFragment(R.id.ideasNav);
+                        break;
+                    case R.id.notificationNav:
+                        setFragment(R.id.notificationNav);
                         break;
                 }
                 return false;

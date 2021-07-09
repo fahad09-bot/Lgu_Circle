@@ -7,14 +7,11 @@
     android:layout_marginTop="@dimen/_13sdp">
 
     <RelativeLayout
-        android:id="@+id/container"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxWidth="@dimen/_300sdp"
-        android:layout_marginStart="@dimen/_13sdp"
-        android:layout_marginTop="@dimen/_13sdp"
-        android:layout_marginBottom="@dimen/_13sdp"
-        android:layout_marginEnd="@dimen/_30sdp"
+        app:layout_constraintHorizontal_bias="0"
+        android:layout_margin="@dimen/_13sdp"
+        app:layout_constraintWidth_max="@dimen/_250sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:background="@drawable/background_left"
-            android:maxWidth="@dimen/_300sdp">
+            android:padding="@dimen/_5sdp">
 
 
             <androidx.cardview.widget.CardView
@@ -34,8 +31,8 @@
                 android:layout_height="@dimen/_200sdp"
                 android:layout_marginHorizontal="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:maxWidth="@dimen/_300sdp"
-                android:minWidth="@dimen/_200sdp"
+                app:layout_constraintHeight_min="@dimen/_200sdp"
+                app:layout_constraintHeight_max="@dimen/_250sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -72,7 +69,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:maxWidth="@dimen/_300sdp"
                 android:text="@string/lorem_ipsum"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_13ssp"

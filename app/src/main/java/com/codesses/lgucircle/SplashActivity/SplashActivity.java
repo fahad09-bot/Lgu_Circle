@@ -10,7 +10,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.codesses.lgucircle.Enums.SharedPrefKey;
 import com.codesses.lgucircle.Utils.Constants;
+import com.codesses.lgucircle.Utils.SharedPrefManager;
 import com.codesses.lgucircle.activity.AuthorityAC;
 import com.codesses.lgucircle.activity.MainActivity;
 import com.codesses.lgucircle.Authentication.LoginActivity;
@@ -44,6 +46,7 @@ public class SplashActivity extends AppCompatActivity {
         {
             intent = new Intent(mContext, ServicesChatAC.class);
             intent.putExtra(Constants.USER_ID, getIntent().getStringExtra(Constants.USER_ID));
+            startActivity(intent);
         }
         if (FirebaseRef.getCurrentUser() != null) {
             mRef = FirebaseRef.getUserRef()
@@ -66,6 +69,7 @@ public class SplashActivity extends AppCompatActivity {
 
             User user = snapshot.getValue(User.class);
             if (FirebaseRef.getCurrentUser().isEmailVerified()) {
+                SharedPrefManager.getInstance(mContext).storeSharedData(SharedPrefKey.USER, user);
                 if (user.getType().equals("authority")) {
                     intent = new Intent(mContext, AuthorityAC.class);
                 } else

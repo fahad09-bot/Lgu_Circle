@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -693,8 +694,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnFocusCha
             roll_no = binding.fullRollNo.getText().toString().trim();
 
         if (selectedType.equals(getString(R.string.user).toLowerCase())) {
-            String[] emailString = email.split("@");
-            if (!emailString[1].equals("lgu.edu.pk")) {
+            if (!email.endsWith("@lgu.edu.pk")) {
                 if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(f_name) && !TextUtils.isEmpty(l_name) && !TextUtils.isEmpty(dep) && !TextUtils.isEmpty(phone) && !TextUtils.isEmpty(roll_no)) {
                     ProgressDialog.ShowProgressDialog(mContext, R.string.sign_up, R.string.please_wait);
                     signup(email, pass, f_name, l_name, dep, phone, roll_no);
@@ -708,7 +708,28 @@ public class SignUpActivity extends AppCompatActivity implements View.OnFocusCha
         } else if (selectedType.equals(getString(R.string.staff).toLowerCase())) {
             if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(f_name) && !TextUtils.isEmpty(l_name) && !TextUtils.isEmpty(dep) && !TextUtils.isEmpty(phone)) {
                 ProgressDialog.ShowProgressDialog(mContext, R.string.signing_up, R.string.please_wait);
-                signup(email, pass, f_name, l_name, dep, phone, roll_no);
+                if(!email.endsWith("@lgu.edu.pk"))
+                {
+                    Toast.makeText(mContext, "you have to use an email that ends with @lgu.edu.pk", Toast.LENGTH_SHORT).show();
+                    binding.signupEmail.setError("must ends with @lgu.edu.pk");
+                    ProgressDialog.DismissProgressDialog();
+                    return;
+                }
+                else if (email.endsWith("@lgu.edu.pk"))
+                {
+                    if (ApplicationUtils.isStaffEmailValid(email))
+                    {
+                        Toast toast = Toast.makeText(mContext, "You can't use this type of email", Toast.LENGTH_SHORT);
+                        toast.show();
+                        binding.signupEmail.setError("not allowed");
+                        ProgressDialog.DismissProgressDialog();
+                        return;
+                    }
+                    else
+                    {
+                        signup(email, pass, f_name, l_name, dep, phone, roll_no);
+                    }
+                }
             } else {
                 Toast.makeText(this, "Fields Must be Filled", Toast.LENGTH_SHORT).show();
             }
@@ -763,6 +784,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnFocusCha
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             ProgressDialog.DismissProgressDialog();
+                            ApplicationUtils.hideKeyboard(mContext);
                             finish();
                             Toast.makeText(mContext, "user created successfully", Toast.LENGTH_SHORT).show();
                         } else {

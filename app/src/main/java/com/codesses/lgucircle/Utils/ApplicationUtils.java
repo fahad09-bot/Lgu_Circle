@@ -64,4 +64,10 @@ public class ApplicationUtils {
         return pattern.matcher(url).find();
     }
 
+    public static boolean isStaffEmailValid(String email)
+    {
+        Pattern pattern = Pattern.compile("(fa|sp)([0-9]{2})+(-)[a-z]+(-)+[0-9]{3}+(@lgu.edu.pk)");
+        return pattern.matcher(email.toLowerCase()).find();
+    }
+
 }

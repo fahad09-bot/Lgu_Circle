@@ -11,6 +11,8 @@ import android.content.SharedPreferences;
 
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Enums.SharedPrefKey;
+import com.codesses.lgucircle.model.User;
+import com.google.gson.Gson;
 
 
 public class SharedPrefManager {
@@ -38,6 +40,15 @@ public class SharedPrefManager {
         SharedPreferences preferences = mCtx.getSharedPreferences(mCtx.getString(R.string.shared_preference), Context.MODE_PRIVATE);
         return preferences.getString(key.toString(), null);
 
+    }
+
+    public void storeSharedData(SharedPrefKey key, User value) {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(mCtx.getString(R.string.shared_preference), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(value);
+        editor.putString(key.toString(), json);
+        editor.apply();
     }
 
 }

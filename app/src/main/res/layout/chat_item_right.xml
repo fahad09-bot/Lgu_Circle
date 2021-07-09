@@ -10,11 +10,9 @@
         android:id="@+id/container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_30sdp"
-        android:layout_marginTop="@dimen/_13sdp"
-        android:layout_marginBottom="@dimen/_13sdp"
-        android:layout_marginEnd="@dimen/_13sdp"
-        android:maxWidth="@dimen/_300sdp"
+        android:layout_margin="@dimen/_13sdp"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintWidth_max="@dimen/_250sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxWidth="@dimen/_300sdp"
+            android:padding="@dimen/_3sdp"
             android:layout_alignParentEnd="true"
             android:background="@drawable/background_right">
 
@@ -32,10 +31,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_200sdp"
                 android:layout_gravity="center"
-                android:minWidth="@dimen/_200sdp"
-                android:maxWidth="@dimen/_300sdp"
                 android:layout_marginHorizontal="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_10sdp"
+                app:layout_constraintHeight_min="@dimen/_200sdp"
+                app:layout_constraintHeight_max="@dimen/_250sdp"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -78,8 +77,8 @@
                 android:textSize="@dimen/_13ssp"
                 android:maxWidth="@dimen/_300sdp"
                 android:visibility="visible"
+                android:padding="@dimen/_3sdp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.00"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/image_con" />
 
@@ -108,7 +107,7 @@
                 app:layout_constraintTop_toBottomOf="@id/show_message" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        >
+
 
     </RelativeLayout>
 

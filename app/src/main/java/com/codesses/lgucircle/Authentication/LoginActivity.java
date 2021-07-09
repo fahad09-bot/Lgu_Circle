@@ -45,7 +45,6 @@ public class LoginActivity extends AppCompatActivity implements OnForgotPass {
 
     String userEmail = "", userPassword = "";
     Query query;
-    ValueEventListener valueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,13 +149,14 @@ public class LoginActivity extends AppCompatActivity implements OnForgotPass {
     private void getUserType(String email, String pass) {
         query = FirebaseRef.getUserRef().orderByChild("email").equalTo(email);
 
-        valueEventListener = query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getChildrenCount() > 0) {
 
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         User model = snapshot.getValue(User.class);
+                        SharedPrefManager.getInstance(mContext).storeSharedData(SharedPrefKey.USER, model);
 
 
                         if (model.getType().equals("authority"))
@@ -240,6 +240,5 @@ public class LoginActivity extends AppCompatActivity implements OnForgotPass {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        query.removeEventListener(valueEventListener);
     }
 }

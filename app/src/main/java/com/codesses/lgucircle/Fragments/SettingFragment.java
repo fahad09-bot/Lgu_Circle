@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,16 +31,20 @@ import androidx.fragment.app.FragmentActivity;
 import com.codesses.lgucircle.Authentication.LoginActivity;
 import com.codesses.lgucircle.Dialogs.ChangePassDialog;
 import com.codesses.lgucircle.Dialogs.ProgressDialog;
+import com.codesses.lgucircle.Enums.SharedPrefKey;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.ApplicationUtils;
 import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.Utils.SharedPrefManager;
 import com.codesses.lgucircle.activity.IncubationActivity;
-import com.codesses.lgucircle.activity.MainActivity;
 import com.codesses.lgucircle.activity.Services.ServicesActivity;
 import com.codesses.lgucircle.activity.YourprofileActivity;
 import com.codesses.lgucircle.databinding.FragmentSettingBinding;
 import com.codesses.lgucircle.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.database.DataSnapshot;
@@ -49,7 +52,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -176,11 +182,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                             public void onClick(DialogInterface arg0, int arg1) {
-                                FirebaseRef.getAuth().signOut();
-                                intent = new Intent(getActivity(), LoginActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                getActivity().finish();
-                                startActivity(intent);
+                                updateToken();
                             }
                         }).create().show();
 
@@ -196,6 +198,32 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent);
                 break;
         }
+    }
+
+    private void updateToken() {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("fcmToken", "");
+        FirebaseRef.getUserRef()
+                .child(FirebaseRef.getCurrentUserId())
+                .updateChildren(hashMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        if (task.isSuccessful())
+                        {
+                            FirebaseRef.getAuth().signOut();
+                            intent = new Intent(getActivity(), LoginActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            getActivity().finish();
+                            startActivity(intent);
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull @NotNull Exception e) {
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void galleryPermission() {
@@ -217,26 +245,29 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
      * Methods Call In Current Fragment
      */
     private void getCurrentUserData() {
-        FirebaseRef.getUserRef()
-                .child(FirebaseRef.getCurrentUserId())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        User model = dataSnapshot.getValue(User.class);
-
-                        if (model.getProfile_img() != null) {
-                            Picasso.get().load(model.getProfile_img()).into(Profile_Img);
-                        }
-                        User_Name.setText(model.getFirst_name() + " " + model.getLast_name());
-                        User_Email.setText(model.getEmail());
-                    }
-
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(getActivity(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        Gson gson = new Gson();
+        User user = gson.fromJson(SharedPrefManager.getInstance(mContext).getSharedData(SharedPrefKey.USER), User.class);
+        if (user.getProfile_img() != null) {
+            Picasso.get().load(user.getProfile_img()).into(Profile_Img);
+        }
+        User_Name.setText(user.getFirst_name() + " " + user.getLast_name());
+        User_Email.setText(user.getEmail());
+//        FirebaseRef.getUserRef()
+//                .child(FirebaseRef.getCurrentUserId())
+//                .addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        User model = dataSnapshot.getValue(User.class);
+//
+//
+//                    }
+//
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//                        Toast.makeText(getActivity(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
     }
 
     private void openChangePassDialog() {

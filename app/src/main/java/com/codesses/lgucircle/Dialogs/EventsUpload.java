@@ -3,7 +3,6 @@ package com.codesses.lgucircle.Dialogs;
 
 import android.Manifest;
 import android.app.Activity;
-
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -13,14 +12,13 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-
 import android.widget.Toast;
-
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -31,7 +29,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.codesses.lgucircle.R;
+import com.codesses.lgucircle.Singleton.VolleySingleton;
 import com.codesses.lgucircle.Utils.ApplicationUtils;
 import com.codesses.lgucircle.Utils.CurrentDateAndTime;
 import com.codesses.lgucircle.Utils.FirebaseRef;
@@ -39,18 +40,22 @@ import com.codesses.lgucircle.databinding.FragmentEventsUploadBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.kunzisoft.switchdatetime.SwitchDateTimeDialogFragment;
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class EventsUpload extends DialogFragment {
@@ -148,7 +153,7 @@ public class EventsUpload extends DialogFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().length()>0)
+                if (s.toString().length() > 0)
                     binding.eventName.setError(null);
             }
 
@@ -323,13 +328,92 @@ public class EventsUpload extends DialogFragment {
         hashMap.put("type", 1);
         hashMap.put("image", imageUrl);
 
-        FirebaseRef.getEventRef().child(event_id).setValue(hashMap);
+        FirebaseRef.getEventRef()
+                .child(event_id)
+                .setValue(hashMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            sendNotification();
+                        }
+                    }
+                });
         binding.eventInfo.setText("");
         binding.datePicker.setText("Date time");
         binding.image.setVisibility(View.GONE);
         binding.dep.setSelection(0);
         ProgressDialog.DismissProgressDialog();
         dismiss();
+    }
+
+    private void sendNotification() {
+        String nId = FirebaseRef.getNotificationRef().push().getKey();
+
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("n_id", nId);
+        map.put("timestamp", System.currentTimeMillis());
+        map.put("type", 4);
+        map.put("sent_by", FirebaseRef.getUserId());
+        map.put("title", binding.eventName.getText().toString());
+        map.put("message", "Up coming event");
+        map.put("is_read", 0);
+
+        assert nId != null;
+        FirebaseRef.getNotificationRef().child(nId).updateChildren(map)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        sendPushNotification();
+                    } else {
+                        Log.e("error_tag", task.getException().getMessage());
+                    }
+                });
+
+    }
+
+    private void sendPushNotification() {
+        try {
+            JSONObject mainObject = new JSONObject();
+            JSONObject notificationObject = new JSONObject();
+            JSONObject dataObject = new JSONObject();
+            mainObject.put("to", "/topics/" + "events");
+
+//            Notification body
+            notificationObject.put("title", "events");
+            notificationObject.put("body", fragmentActivity.getString(R.string.new_message));
+
+//            Custom payload
+//            dataObject.put("c_id", userId);
+//            dataObject.put("user_image", user.getProfile_img());
+//            dataObject.put("user_name", user.getFull_name());
+            mainObject.put("notification", notificationObject);
+            mainObject.put("data", dataObject);
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                    ApplicationUtils.FCM_URL,
+                    mainObject,
+                    response -> {
+
+                        Log.d("FCM_RESPONSE", "sendPushNotification: " + response);
+                        Toast.makeText(fragmentActivity, "Posted", Toast.LENGTH_SHORT).show();
+
+                    },
+                    error -> Log.d("FCM_RESPONSE", "Error " + error)
+            ) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("content-type", "application/json");
+                    headers.put("authorization", "key=AAAABefXTZo:APA91bFhvO8QxjODhBLgZSyqgnzIRYTOl02b2coksyna5790lvige4VHhKhdjD88dArcjHjgBbAfMl2oKNBKxJqTjLTT4aOqJRy-XFH70vftrxlBUXJU-H6hHWLYeGyLJK1GeoMpJjwB");
+                    return headers;
+                }
+            };
+
+            VolleySingleton.getInstance(fragmentActivity).addToRequestQueue(request);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void uploadWithoutImage() {
@@ -344,7 +428,15 @@ public class EventsUpload extends DialogFragment {
         hashMap.put("type", 0);
         hashMap.put("image", "");
 
-        FirebaseRef.getEventRef().child(event_id).setValue(hashMap);
+        FirebaseRef.getEventRef().child(event_id).setValue(hashMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            sendNotification();
+                        }
+                    }
+                });
 
         binding.eventInfo.setText("");
         binding.datePicker.setText("Date time");

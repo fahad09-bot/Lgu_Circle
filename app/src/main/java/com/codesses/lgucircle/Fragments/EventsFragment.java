@@ -2,21 +2,22 @@ package com.codesses.lgucircle.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
 import com.codesses.lgucircle.Adapters.EventAdapter;
 import com.codesses.lgucircle.Dialogs.EventsUpload;
+import com.codesses.lgucircle.Enums.SharedPrefKey;
 import com.codesses.lgucircle.Interfaces.OnEventImageClick;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.Utils.SharedPrefManager;
 import com.codesses.lgucircle.activity.ImageViewActivity;
 import com.codesses.lgucircle.databinding.FragmentEventsBinding;
 import com.codesses.lgucircle.model.Event;
@@ -24,6 +25,7 @@ import com.codesses.lgucircle.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -96,24 +98,30 @@ public class EventsFragment extends Fragment {
     }
 
     private void checkUserType() {
-        FirebaseRef
-                .getUserRef()
-                .child(FirebaseRef.getCurrentUserId())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        User model = snapshot.getValue(User.class);
-                        if (model.getType().toLowerCase().equals("authority"))
-                            binding.addEvent.setVisibility(View.VISIBLE);
-                        else
-                            binding.addEvent.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-                        Toast.makeText(fragmentActivity, error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        Gson gson = new Gson();
+        User user = gson.fromJson(SharedPrefManager.getInstance(fragmentActivity).getSharedData(SharedPrefKey.USER), User.class);
+        if (user.getType().toLowerCase().equals("authority"))
+            binding.addEvent.setVisibility(View.VISIBLE);
+        else
+            binding.addEvent.setVisibility(View.GONE);
+//        FirebaseRef
+//                .getUserRef()
+//                .child(FirebaseRef.getCurrentUserId())
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//                        User model = snapshot.getValue(User.class);
+//                        if (model.getType().toLowerCase().equals("authority"))
+//                            binding.addEvent.setVisibility(View.VISIBLE);
+//                        else
+//                            binding.addEvent.setVisibility(View.GONE);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//                        Toast.makeText(fragmentActivity, error.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
     }
 
 }

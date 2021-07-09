@@ -10,4 +10,8 @@
         android:title="@string/ideas"
         android:icon="@drawable/ic_idea"
         />
+    <item android:id="@+id/notificationNav"
+        android:icon="@drawable/ic_notification"
+        android:title="@string/notification"
+        />
 </menu>
