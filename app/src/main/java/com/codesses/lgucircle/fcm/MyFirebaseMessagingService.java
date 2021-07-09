@@ -83,7 +83,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     resultIntent = new Intent(getApplicationContext(), MainActivity.class);
             }
 
-            resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
                     0 /* Request code */, resultIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
@@ -99,6 +100,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .setTicker("Bestmarts")
                     .setContentTitle(title)
                     .setContentText(body)
+                    .setContentIntent(pendingIntent)
                     .setContentInfo("Info");
             if (remoteMessage.getData().get("user_image") != null) {
                 Glide.with(getApplicationContext()).asBitmap().load(remoteMessage.getData().get("user_image"))
@@ -133,7 +135,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 else
                     resultIntent = new Intent(getApplicationContext(), MainActivity.class);
             }
-            resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
                     0 /* Request code */, resultIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
@@ -216,7 +219,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 else
                     resultIntent = new Intent(getApplicationContext(), MainActivity.class);
             }
-            resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
                     0 /* Request code */, resultIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);

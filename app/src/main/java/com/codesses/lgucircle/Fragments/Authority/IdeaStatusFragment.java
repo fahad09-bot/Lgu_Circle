@@ -170,6 +170,7 @@ public class IdeaStatusFragment extends Fragment {
                 .setNegativeButton(R.string._default, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        getUserData(ideaList.get(position).getPitched_by());
                         updateStatus(id, position, 3, 2);
                         dialog.dismiss();
                     }
