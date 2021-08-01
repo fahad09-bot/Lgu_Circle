@@ -14,6 +14,7 @@ import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.FirebaseRef;
 import com.codesses.lgucircle.model.Chat;
+import com.codesses.lgucircle.viewHolder.ViewHolderMessage;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;

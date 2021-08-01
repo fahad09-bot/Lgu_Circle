@@ -5,7 +5,7 @@
     <!--    TODO: Authentication-->
 
     <string name="login">Login</string>
-    <string name="user">User</string>
+    <string name="student">Student</string>
     <string name="authority">Authority</string>
     <string name="email">Email</string>
     <string name="password">Password</string>

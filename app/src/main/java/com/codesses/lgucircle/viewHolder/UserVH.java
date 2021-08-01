@@ -23,7 +23,7 @@ public class UserVH extends RecyclerView.ViewHolder {
 
     public void onBind(User user, OnUserClick onUserClick) {
         Picasso.get().load(user.getProfile_img()).into(binding.userImage);
-        if (user.getType().equals("user"))
+        if (user.getType().equals("student"))
             binding.type.setVisibility(View.GONE);
         else if (user.getType().equals("staff"))
         {

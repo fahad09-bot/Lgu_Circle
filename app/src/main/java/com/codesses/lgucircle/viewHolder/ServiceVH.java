@@ -9,16 +9,19 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.codesses.lgucircle.Enums.SharedPrefKey;
 import com.codesses.lgucircle.Interfaces.OnItemClick;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.CurrentDateAndTime;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.Utils.SharedPrefManager;
 import com.codesses.lgucircle.databinding.ServicesFeedItemBinding;
 import com.codesses.lgucircle.model.Service;
 import com.codesses.lgucircle.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +31,8 @@ public class ServiceVH extends RecyclerView.ViewHolder {
 
     ServicesFeedItemBinding binding;
     String timeAgo;
+    User currentUser;
+
     public ServiceVH(@NonNull ServicesFeedItemBinding binding) {
         super(binding.getRoot());
         this.binding = binding;
@@ -36,11 +41,16 @@ public class ServiceVH extends RecyclerView.ViewHolder {
     public void onBind(Service service, Context mContext, OnItemClick onItemClick)
     {
         TimeAgoHandle(service.getTime_stamp(), binding.timestamp);
+
+        Gson gson = new Gson();
+        currentUser = gson.fromJson(SharedPrefManager.getInstance(mContext).getSharedData(SharedPrefKey.USER), User.class);
+
         FirebaseRef.getUserRef().child(service.getPosted_by()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-                binding.username.setText(user.getFirst_name() + " " + user.getLast_name());
+                assert user != null;
+                binding.username.setText(user.getFull_name());
 
             }
 
@@ -56,6 +66,19 @@ public class ServiceVH extends RecyclerView.ViewHolder {
                 onItemClick.onMenuClick(v, service.getS_id());
             }
         });
+
+        if (service.getPosted_by().equals(currentUser.getU_id())) {
+            binding.options.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClick.onMenuClick(v, service.getS_id());
+                }
+            });
+        }
+        else
+        {
+            binding.options.setVisibility(View.INVISIBLE);
+        }
 
         CharSequence description = service.getDescription();
         binding.serviceDescription.setTrimLines(6);

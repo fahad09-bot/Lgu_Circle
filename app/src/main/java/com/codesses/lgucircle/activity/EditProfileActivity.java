@@ -1,12 +1,7 @@
 package com.codesses.lgucircle.activity;
 
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -14,13 +9,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.codesses.lgucircle.Enums.SharedPrefKey;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.CheckEmptyFields;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.Utils.SharedPrefManager;
 import com.codesses.lgucircle.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.hbb20.CountryCodePicker;
 
 import java.util.HashMap;
@@ -127,11 +129,12 @@ public class EditProfileActivity extends AppCompatActivity {
             if (bio.isEmpty()) {
                 map.put("first_name", firstName);
                 map.put("last_name", lastName);
-                map.put("phone_no", Sp_Country_Code.getSelectedCountryCodeWithPlus() + phoneNo);
+                map.put("phone", Sp_Country_Code.getSelectedCountryCodeWithPlus() + phoneNo);
+                map.put("bio", "");
             } else {
                 map.put("first_name", firstName);
                 map.put("last_name", lastName);
-                map.put("phone_no", Sp_Country_Code.getSelectedCountryCodeWithPlus() + phoneNo);
+                map.put("phone", Sp_Country_Code.getSelectedCountryCodeWithPlus() + phoneNo);
                 map.put("bio", bio);
             }
 
@@ -143,6 +146,14 @@ public class EditProfileActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
 //                                onBackPressed();
                             Toast.makeText(mContext, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                            Gson gson = new Gson();
+                            User user = gson.fromJson(SharedPrefManager.getInstance(mContext).getSharedData(SharedPrefKey.USER), User.class);
+                            user.setFirst_name(firstName);
+                            user.setLast_name(lastName);
+                            user.setPhone(Sp_Country_Code.getSelectedCountryCodeWithPlus() + phoneNo);
+                            user.setBio(bio);
+                            SharedPrefManager.getInstance(mContext).storeSharedData(SharedPrefKey.USER, user);
+
                         } else {
                             Toast.makeText(mContext, "Alert!" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }

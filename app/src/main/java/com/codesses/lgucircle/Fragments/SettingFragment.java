@@ -250,7 +250,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         if (user.getProfile_img() != null) {
             Picasso.get().load(user.getProfile_img()).into(Profile_Img);
         }
-        User_Name.setText(user.getFirst_name() + " " + user.getLast_name());
+        User_Name.setText(user.getFull_name());
         User_Email.setText(user.getEmail());
 //        FirebaseRef.getUserRef()
 //                .child(FirebaseRef.getCurrentUserId())
@@ -275,56 +275,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         //                TODO: ReAuthenticate Password
 //        reAuthenticatePassword(oldPass, newPass)
         changePassDialog.show(getActivity().getSupportFragmentManager(), "Change Pass Dialog");
-    }
-
-    private void reAuthenticatePassword(String oldPass, String newPass) {
-        AuthCredential authCredential = EmailAuthProvider.getCredential(FirebaseRef.getUserEmail(), oldPass);
-
-        FirebaseRef.getCurrentUser().reauthenticate(authCredential).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-
-                FirebaseRef.getCurrentUser().updatePassword(newPass).addOnCompleteListener(task1 -> {
-                    if (task1.isSuccessful()) {
-
-                        passSaveInDatabase(newPass);
-//                        Toast.makeText(getActivity(), getString(R.string.pass_updated), Toast.LENGTH_SHORT).show();
-
-                    } else {
-
-                        Toast.makeText(getActivity(), "Alert! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
-            } else {
-                Toast.makeText(getActivity(), "Alert! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-    }
-
-    private void passSaveInDatabase(String pass) {
-        Map<String, Object> map = new HashMap<>();
-
-        map.put("password", pass);
-
-        FirebaseRef.getUserRef()
-                .child(FirebaseRef.getUserId())
-                .updateChildren(map)
-                .addOnCompleteListener(task -> {
-
-                    if (task.isSuccessful()) {
-
-                        Toast.makeText(getActivity(), getString(R.string.pass_updated), Toast.LENGTH_SHORT).show();
-
-                    } else {
-
-                        Toast.makeText(getActivity(), "Alert! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
     }
 
     private void galleryImagePick() {
@@ -363,12 +313,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 //                Toast.makeText(PostUploadAV.this, "", Toast.LENGTH_SHORT).show();
         }).addOnSuccessListener(taskSnapshot ->
                 reference.getDownloadUrl().addOnCompleteListener(task -> {
+                    ProgressDialog.DismissProgressDialog();
                     if (task.isSuccessful()) {
                         profileUpload(task.getResult().toString());
-                        ProgressDialog.DismissProgressDialog();
 
                     } else {
-                        ProgressDialog.DismissProgressDialog();
                         Log.e("ERROR_TAG", task.getException().getMessage());
                     }
                 })).addOnFailureListener(e -> {
@@ -388,6 +337,11 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(mContext, getString(R.string.profile_updated), Toast.LENGTH_SHORT).show();
+                        Picasso.get().load(profileImgUrl).into(Profile_Img);
+                        Gson gson = new Gson();
+                        User user = gson.fromJson(SharedPrefManager.getInstance(mContext).getSharedData(SharedPrefKey.USER), User.class);
+                        user.setProfile_img(profileImgUrl);
+                        SharedPrefManager.getInstance(mContext).storeSharedData(SharedPrefKey.USER, user);
 
 //                        Update user data to shared preference
 
@@ -398,4 +352,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getCurrentUserData();
+    }
 }

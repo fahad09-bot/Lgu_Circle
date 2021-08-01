@@ -71,4 +71,52 @@ public class User {
     public String getFull_name() {
         return getFirst_name() + " " + getLast_name();
     }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
+    }
+
+    public void setLast_name(String last_name) {
+        this.last_name = last_name;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setProfile_img(String profile_img) {
+        this.profile_img = profile_img;
+    }
+
+    public void setU_id(String u_id) {
+        this.u_id = u_id;
+    }
+
+    public void setRoll_no(String roll_no) {
+        this.roll_no = roll_no;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 }

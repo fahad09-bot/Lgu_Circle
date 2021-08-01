@@ -86,6 +86,13 @@ public class SignUpActivity extends AppCompatActivity implements View.OnFocusCha
         binding.fullRollNo.setVisibility(View.GONE);
         selectedType = binding.radioUser.getText().toString().toLowerCase().trim();
 
+        binding.backPress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
 //    TODO: Set Spinners
         spinnerSessions();
         spinnerYears();
@@ -132,7 +139,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnFocusCha
         binding.spSession.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                if (selectedType.equals(getString(R.string.user).toLowerCase().trim())) {
+                if (selectedType.equals(getString(R.string.student).toLowerCase().trim())) {
                     selectedSession = adapterView.getItemAtPosition(position).toString();
                     isSession = true;
                     if (selectedSession.equals(getString(R.string.choose_session))) {
@@ -319,7 +326,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnFocusCha
                 RadioButton radioButton = group.findViewById(checkedId);
 
                 selectedType = radioButton.getText().toString().toLowerCase().trim();
-                if (selectedType.equals(getString(R.string.user).toLowerCase())) {
+                if (selectedType.equals(getString(R.string.student).toLowerCase())) {
                     binding.spSession.setVisibility(View.VISIBLE);
                     binding.spYear.setVisibility(View.VISIBLE);
                     binding.spDep.setVisibility(View.VISIBLE);
@@ -690,10 +697,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnFocusCha
             dep = selectedProgram + selectedDepartment;
 
         String roll_no = "";
-        if (selectedType.equals(getString(R.string.user).toLowerCase()))
+        if (selectedType.equals(getString(R.string.student).toLowerCase()))
             roll_no = binding.fullRollNo.getText().toString().trim();
 
-        if (selectedType.equals(getString(R.string.user).toLowerCase())) {
+        if (selectedType.equals(getString(R.string.student).toLowerCase())) {
             if (!email.endsWith("@lgu.edu.pk")) {
                 if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(f_name) && !TextUtils.isEmpty(l_name) && !TextUtils.isEmpty(dep) && !TextUtils.isEmpty(phone) && !TextUtils.isEmpty(roll_no)) {
                     ProgressDialog.ShowProgressDialog(mContext, R.string.sign_up, R.string.please_wait);
@@ -770,7 +777,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnFocusCha
         map.put("last_name", l_name);
         map.put("department", dep);
         map.put("type", selectedType);
-        if (selectedType.equals(getString(R.string.user).toLowerCase().trim()))
+        if (selectedType.equals(getString(R.string.student).toLowerCase().trim()))
             map.put("roll_no", roll_no);
 
         map.put("phone", binding.spCountryCode.getSelectedCountryCodeWithPlus() + phone);
@@ -819,7 +826,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnFocusCha
     }
 
     private void updateButtonState() {
-        if (selectedType.equals(getString(R.string.user).toLowerCase().trim()))
+        if (selectedType.equals(getString(R.string.student).toLowerCase().trim()))
             binding.signupBtn.setEnabled(isFirstName && isLastName && isEmail && isPhoneNo && isRollNo && isPassword && isConfirmPassword);
         else if (selectedType.equals(getString(R.string.staff).toLowerCase().trim()))
             binding.signupBtn.setEnabled(isFirstName && isLastName && isEmail && isPhoneNo && isPassword && isProgram && isDepartment && isConfirmPassword);

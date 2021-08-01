@@ -1,4 +1,4 @@
-package com.codesses.lgucircle.Adapters;
+package com.codesses.lgucircle.viewHolder;
 
 import android.content.Context;
 import android.text.format.DateFormat;
@@ -37,7 +37,7 @@ public class ViewHolderMessage extends RecyclerView.ViewHolder {
     CardView image_con;
     int viewType;
     ProgressBar progressBar;
-    ConstraintLayout constraintLayout;
+    public ConstraintLayout constraintLayout;
 
 
     public ViewHolderMessage(@NonNull @NotNull View itemView, int viewType) {

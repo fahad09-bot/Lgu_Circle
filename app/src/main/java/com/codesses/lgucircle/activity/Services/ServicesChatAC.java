@@ -219,8 +219,8 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
 
     private void sendMessage(View view) {
         makingChatList();
-        ProgressDialog.ShowProgressDialog(mContext, R.string.sending, R.string.please_wait);
         if (CheckEmptyFields.isEditText(mContext, binding.message.getText().toString(), binding.message)) {
+            ProgressDialog.ShowProgressDialog(mContext, R.string.sending, R.string.please_wait);
             String messageId = FirebaseRef.getMessageRef().push().getKey();
             message = binding.message.getText().toString().trim();
             HashMap<String, Object> message = new HashMap<>();
@@ -246,6 +246,7 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull @NotNull Exception e) {
+                            ProgressDialog.DismissProgressDialog();
                             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -266,6 +267,7 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull @NotNull Exception e) {
+                            ProgressDialog.DismissProgressDialog();
                             Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -318,7 +320,7 @@ public class ServicesChatAC extends AppCompatActivity implements OnImageClick {
             notificationObject.put("body", mContext.getString(R.string.new_message));
 
 //            Custom payload
-            dataObject.put("c_id", userId);
+            dataObject.put("c_id", currentUser.getU_id());
             dataObject.put("user_image", currentUser.getProfile_img());
             dataObject.put("user_name", currentUser.getFull_name());
             mainObject.put("notification", notificationObject);

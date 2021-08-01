@@ -1,42 +1,37 @@
 package com.codesses.lgucircle.Dialogs;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.CheckEmptyFields;
+import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.databinding.ChangePasswordBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ChangePassDialog extends DialogFragment{
+public class ChangePassDialog extends DialogFragment {
 
-    @BindView(R.id.old_pass)
-    EditText Old_Pass;
-    @BindView(R.id.old_pass_hide)
-    ImageView Old_Pass_Hide;
-    @BindView(R.id.new_pass)
-    EditText New_Pass;
-    @BindView(R.id.new_pass_hide)
-    ImageView New_Pass_Hide;
-    @BindView(R.id.update_pass)
-    Button Update_Pass;
+    ChangePasswordBinding binding;
+
+    FragmentActivity fragmentActivity;
 
 
     //    TODO: Variables
@@ -57,25 +52,36 @@ public class ChangePassDialog extends DialogFragment{
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-        View view = getActivity().getLayoutInflater().inflate(R.layout.change_password, null);
-        ButterKnife.bind(this, view);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(fragmentActivity);
+        binding = ChangePasswordBinding.bind(LayoutInflater.from(fragmentActivity).inflate(R.layout.change_password, null));
 
-        alertDialog.setView(view)
+        alertDialog.setView(binding.getRoot())
                 .setTitle(getString(R.string.change_pass));
 
 
 //        TODO: Click Listeners
-        Old_Pass_Hide.setOnClickListener(this::oldPassVisibility);
-        New_Pass_Hide.setOnClickListener(this::newPassVisibility);
-        Update_Pass.setOnClickListener(this::updatePass);
+        binding.oldPassHide.setOnClickListener(this::oldPassVisibility);
+        binding.newPass.setOnClickListener(this::newPassVisibility);
+        binding.updatePass.setOnClickListener(this::updatePass);
 
 
         return alertDialog.show();
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        fragmentActivity = getActivity();
+    }
 
-//    @Override
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return super.onCreateView(inflater, container, savedInstanceState);
+
+    }
+
+    //    @Override
 //    public void onDetach() {
 //        onChangePassClick = null;
 //        super.onDetach();
@@ -87,16 +93,70 @@ public class ChangePassDialog extends DialogFragment{
      */
 
     private void updatePass(View view) {
-        String oldPass = Old_Pass.getText().toString().trim();
-        String newPass = New_Pass.getText().toString().trim();
+        String oldPass = binding.oldPass.getText().toString().trim();
+        String newPass = binding.newPass.getText().toString().trim();
 
-        if (CheckEmptyFields.isEditText(getActivity(), oldPass, Old_Pass) &&
-                CheckEmptyFields.isEditText(getActivity(), newPass, New_Pass) &&
-                CheckEmptyFields.isPassNotMatch(getActivity(), oldPass, newPass, New_Pass)) {
+        if (CheckEmptyFields.isEditText(fragmentActivity, oldPass, binding.oldPass) &&
+                CheckEmptyFields.isEditText(fragmentActivity, newPass, binding.newPass) &&
+                CheckEmptyFields.isPassNotMatch(fragmentActivity, oldPass, newPass, binding.newPass)) {
 
 //            onChangePassClick.onClick(oldPass, newPass);
+            reAuthenticatePassword(oldPass, newPass);
             dismiss();
         }
+
+    }
+
+    private void reAuthenticatePassword(String oldPass, String newPass) {
+        AuthCredential authCredential = EmailAuthProvider.getCredential(FirebaseRef.getUserEmail(), oldPass);
+
+        if (authCredential != null) {
+            FirebaseRef.getCurrentUser().reauthenticate(authCredential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+
+                        FirebaseRef.getCurrentUser().updatePassword(newPass).addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                ChangePassDialog.this.passSaveInDatabase(newPass);
+                            } else {
+                                Toast.makeText(fragmentActivity, "Alert! " + task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    } else {
+                        Toast.makeText(fragmentActivity, "Alert! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+        } else {
+            Toast.makeText(fragmentActivity, "Alert! " + "Please enter correct old password", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+    private void passSaveInDatabase(String pass) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("password", pass);
+
+        FirebaseRef.getUserRef()
+                .child(FirebaseRef.getUserId())
+                .updateChildren(map)
+                .addOnCompleteListener(task -> {
+
+                    if (task.isSuccessful()) {
+
+                        Toast.makeText(getActivity(), getString(R.string.pass_updated), Toast.LENGTH_SHORT).show();
+
+                    } else {
+
+                        Toast.makeText(getActivity(), "Alert! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
 
     }
 
@@ -104,27 +164,27 @@ public class ChangePassDialog extends DialogFragment{
     private void oldPassVisibility(View view) {
         if (isOldPassVisible) {
             isOldPassVisible = false;
-            Old_Pass_Hide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
-            Old_Pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            binding.oldPassHide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+            binding.oldPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         } else {
             isOldPassVisible = true;
-            Old_Pass_Hide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
-            Old_Pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            binding.oldPassHide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
+            binding.oldPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         }
     }
 
     private void newPassVisibility(View view) {
         if (isNewPassVisible) {
             isNewPassVisible = false;
-            New_Pass_Hide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
-            New_Pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            binding.newPassHide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+            binding.newPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         } else {
 
             isNewPassVisible = true;
-            New_Pass_Hide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
-            New_Pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            binding.newPassHide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
+            binding.newPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         }
     }
 

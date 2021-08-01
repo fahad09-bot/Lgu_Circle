@@ -23,7 +23,7 @@ public class OreoNotification extends ContextWrapper {
     public OreoNotification(Context base) {
         super(base);
 
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel();
         }
     }
@@ -31,7 +31,7 @@ public class OreoNotification extends ContextWrapper {
     @TargetApi(Build.VERSION_CODES.O)
     private void createChannel() {
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                CHANNEL_NAME,  NotificationManager.IMPORTANCE_HIGH);
+                CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
         channel.setDescription("Fcm Test channel for app test FCM");
         channel.enableLights(true);
         channel.enableVibration(true);
@@ -41,9 +41,9 @@ public class OreoNotification extends ContextWrapper {
         getManager().createNotificationChannel(channel);
     }
 
-    public NotificationManager getManager(){
-        if(notificationManager == null){
-            notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+    public NotificationManager getManager() {
+        if (notificationManager == null) {
+            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         }
 
         return notificationManager;
@@ -51,8 +51,8 @@ public class OreoNotification extends ContextWrapper {
 
 
     @TargetApi(Build.VERSION_CODES.O)
-    public Notification.Builder getOreoNotification(String title, String body, PendingIntent pendingIntent, Uri soundUri, String icon){
-        return  new Notification.Builder(getApplicationContext(), CHANNEL_ID)
+    public Notification.Builder getOreoNotification(String title, String body, PendingIntent pendingIntent, Uri soundUri, String icon) {
+        return new Notification.Builder(getApplicationContext(), CHANNEL_ID)
                 .setAutoCancel(true)
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
                 .setDefaults(Notification.DEFAULT_ALL)

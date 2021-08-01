@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class UserSearchDialog extends DialogFragment {
@@ -101,7 +102,7 @@ public class UserSearchDialog extends DialogFragment {
                 List<User> filteredList = new ArrayList<>();
                 for (User user : userList)
                 {
-                    if (user.getFirst_name().contains(s.toString().trim().toLowerCase()) || user.getLast_name().contains(s.toString().trim().toLowerCase()))
+                    if (user.getFull_name().trim().toLowerCase().contains(s.toString().trim().toLowerCase()))
                     {
                         filteredList.add(user);
                     }

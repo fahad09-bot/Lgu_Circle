@@ -86,48 +86,50 @@ public class IncubationActivity extends AppCompatActivity {
 
 
     private void registerIdea(View view) {
-
-        new AlertDialog
-                .Builder(mContext)
-                .setTitle(getString(R.string.register_idea))
-                .setMessage(getString(R.string.idea_confirmation))
-                .setPositiveButton("DONE", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        sendDataToFirebase();
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("CANCEL", null)
-                .show();
-    }
-
-    private void sendDataToFirebase() {
         pitch = binding.pitch.getText().toString();
 
         if (!TextUtils.isEmpty(pitch)) {
-            String pitch_id = FirebaseRef.getIdeaRef().push().getKey();
-            HashMap<String, Object> ideaMap = new HashMap<>();
-            ideaMap.put("i_id", pitch_id);
-            ideaMap.put("pitched_by", FirebaseRef.getCurrentUserId());
-            ideaMap.put("pitch", pitch);
-            ideaMap.put("status", 1);
-            FirebaseRef.getIdeaRef().child(pitch_id)
-                    .updateChildren(ideaMap)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+            new AlertDialog
+                    .Builder(mContext)
+                    .setTitle(getString(R.string.register_idea))
+                    .setMessage(getString(R.string.idea_confirmation))
+                    .setPositiveButton("DONE", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onComplete(@NonNull @NotNull Task<Void> task) {
-                            binding.pitch.setText("");
-                            sendNotification();
+                        public void onClick(DialogInterface dialog, int which) {
+                            sendDataToFirebase();
+                            dialog.dismiss();
                         }
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull @NotNull Exception e) {
-                            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    .setNegativeButton("CANCEL", null)
+                    .show();
+        } else {
+            Toast.makeText(mContext, "Please fill the field", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void sendDataToFirebase() {
+
+        String pitch_id = FirebaseRef.getIdeaRef().push().getKey();
+        HashMap<String, Object> ideaMap = new HashMap<>();
+        ideaMap.put("i_id", pitch_id);
+        ideaMap.put("pitched_by", FirebaseRef.getCurrentUserId());
+        ideaMap.put("pitch", pitch);
+        ideaMap.put("status", 1);
+        FirebaseRef.getIdeaRef().child(pitch_id)
+                .updateChildren(ideaMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull @NotNull Task<Void> task) {
+                        binding.pitch.setText("");
+                        sendNotification();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+                        Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
 
 
     }

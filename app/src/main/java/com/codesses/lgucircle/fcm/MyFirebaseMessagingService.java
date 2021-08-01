@@ -64,7 +64,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @SuppressLint("LongLogTag")
     private void sendNotification(RemoteMessage remoteMessage) {
-        if (!isAppIsInBackground(getApplicationContext())) {
+        if (isAppIsInBackground(getApplicationContext())) {
             //foreground app
             Log.e("remoteMessage foreground", remoteMessage.getData().toString());
             String title = remoteMessage.getNotification().getTitle();
@@ -86,7 +86,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
-                    0 /* Request code */, resultIntent,
+                    1 /* Request code */, resultIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -116,7 +116,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             }
                         });
             }
-            notificationManager.notify(0, notificationBuilder.build());
+            notificationManager.notify(1, notificationBuilder.build());
         } else {
             Log.e("remoteMessage background", remoteMessage.getData().toString());
             Map data = remoteMessage.getData();
@@ -138,7 +138,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
-                    0 /* Request code */, resultIntent,
+                    1 /* Request code */, resultIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -170,38 +170,30 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         });
             }
 
-            notificationManager.notify(0, notificationBuilder.build());
+            notificationManager.notify(1, notificationBuilder.build());
         }
     }
 
     public static boolean isAppIsInBackground(Context context) {
         boolean isInBackground = true;
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    for (String activeProcess : processInfo.pkgList) {
-                        if (activeProcess.equals(context.getPackageName())) {
-                            isInBackground = false;
-                        }
+        List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+            if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                for (String activeProcess : processInfo.pkgList) {
+                    if (activeProcess.equals(context.getPackageName())) {
+                        isInBackground = false;
                     }
                 }
             }
-        } else {
-            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-            ComponentName componentInfo = taskInfo.get(0).topActivity;
-            if (componentInfo.getPackageName().equals(context.getPackageName())) {
-                isInBackground = false;
-            }
         }
 
-        return isInBackground;
+        return !isInBackground;
     }
 
     @SuppressLint("NewApi")
     private void sendNotification1(RemoteMessage remoteMessage) {
-        if (!isAppIsInBackground(getApplicationContext())) {
+        if (isAppIsInBackground(getApplicationContext())) {
             //foreground app
             Log.e("remoteMessage", remoteMessage.getData().toString());
             String title = remoteMessage.getNotification().getTitle();
@@ -221,7 +213,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
             resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
-                    0 /* Request code */, resultIntent,
+                    1 /* Request code */, resultIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             Uri defaultsound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -229,7 +221,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             OreoNotification oreoNotification = new OreoNotification(this);
             Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent, defaultsound, String.valueOf(R.mipmap.ic_launcher_foreground));
 
-            int i = 0;
+            int i = 1;
             oreoNotification.getManager().notify(i, builder.build());
 
 
@@ -252,13 +244,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
             resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
-                    0 /* Request code */, resultIntent,
+                    1 /* Request code */, resultIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
             Uri defaultsound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
             OreoNotification oreoNotification = new OreoNotification(this);
             Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent, defaultsound, String.valueOf(R.mipmap.ic_launcher_foreground));
-            int i = 0;
+            int i = 1;
             oreoNotification.getManager().notify(i, builder.build());
         }
 

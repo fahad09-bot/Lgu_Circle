@@ -66,7 +66,7 @@
                         android:layout_weight="1"
                         android:buttonTint="@color/Green"
                         android:checked="true"
-                        android:text="@string/user"
+                        android:text="@string/student"
                         android:textSize="@dimen/_15ssp"
                         android:textStyle="bold" />
 

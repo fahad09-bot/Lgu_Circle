@@ -5,28 +5,28 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.codesses.lgucircle.Enums.SharedPrefKey;
 import com.codesses.lgucircle.Interfaces.OnItemClick;
 import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.Utils.SharedPrefManager;
 import com.codesses.lgucircle.activity.CommentActivity;
 import com.codesses.lgucircle.activity.ImageViewActivity;
 import com.codesses.lgucircle.databinding.UserFeedItemLayoutBinding;
-import com.codesses.lgucircle.model.Comment;
 import com.codesses.lgucircle.model.Post;
 import com.codesses.lgucircle.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,6 +34,8 @@ public class UserPostViewHolder extends RecyclerView.ViewHolder {
     private UserFeedItemLayoutBinding binding;
     private Context mContext;
     String timeAgo;
+
+    User currentUser;
 
     public UserPostViewHolder(@NonNull UserFeedItemLayoutBinding binding) {
         super(binding.getRoot());
@@ -44,7 +46,8 @@ public class UserPostViewHolder extends RecyclerView.ViewHolder {
     public void bind(Context context, Post model, OnItemClick onItemClick) {
         mContext = context;
         getUserInfo(model.getPosted_by());
-
+        Gson gson = new Gson();
+        currentUser = gson.fromJson(SharedPrefManager.getInstance(mContext).getSharedData(SharedPrefKey.USER), User.class);
         binding.status.setVisibility(View.GONE);
 
         binding.timestamp.setText(String.valueOf(model.getTimestamp()));
@@ -76,12 +79,18 @@ public class UserPostViewHolder extends RecyclerView.ViewHolder {
             mContext.startActivity(intent, options.toBundle());
         });
 
-        binding.options.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onItemClick.onMenuClick(v, model.getP_id());
-            }
-        });
+        if (model.getPosted_by().equals(currentUser.getU_id())) {
+            binding.options.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClick.onMenuClick(v, model.getP_id());
+                }
+            });
+        }
+        else
+        {
+            binding.options.setVisibility(View.INVISIBLE);
+        }
 
 
 //         Opinion
