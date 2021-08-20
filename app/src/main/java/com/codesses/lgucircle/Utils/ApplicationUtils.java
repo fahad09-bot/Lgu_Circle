@@ -20,6 +20,7 @@ public class ApplicationUtils {
 
     public static final String DEFAULT_IMAGE="https://firebasestorage.googleapis.com/v0/b/lgu-circle.appspot.com/o/default_image.jpg?alt=media&token=4c18e4f8-6d9e-4ea4-84f3-b0101fdfec09";
     public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
+    public static final String ERROR_TAG = "RESPONSE_FAILURE";
 
     //    TODO: Constants
     public static final int IMAGE_PERMISSION_CODE = 1000;

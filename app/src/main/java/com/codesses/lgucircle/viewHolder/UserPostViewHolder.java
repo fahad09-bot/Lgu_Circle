@@ -97,6 +97,8 @@ public class UserPostViewHolder extends RecyclerView.ViewHolder {
         binding.comment.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, CommentActivity.class);
             intent.putExtra(mContext.getString(R.string.post_id), model.getP_id());
+            intent.putExtra(mContext.getString(R.string.intent_posted_by_id), model.getPosted_by());
+
             mContext.startActivity(intent);
         });
 

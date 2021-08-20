@@ -6,7 +6,6 @@ import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,6 +27,7 @@ import com.codesses.lgucircle.R;
 import com.codesses.lgucircle.Utils.Constants;
 import com.codesses.lgucircle.Utils.SharedPrefManager;
 import com.codesses.lgucircle.activity.AuthorityAC;
+import com.codesses.lgucircle.activity.CommentActivity;
 import com.codesses.lgucircle.activity.MainActivity;
 import com.codesses.lgucircle.activity.Services.ServicesChatAC;
 import com.codesses.lgucircle.model.User;
@@ -36,6 +36,8 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
@@ -64,11 +66,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @SuppressLint("LongLogTag")
     private void sendNotification(RemoteMessage remoteMessage) {
+
+        String notificationType = remoteMessage.getData().get(getApplicationContext().getString(R.string.intent_notification_type));
+        JSONObject json = null;
+        try {
+            json = new JSONObject(remoteMessage.getData().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         if (isAppIsInBackground(getApplicationContext())) {
             //foreground app
             Log.e("remoteMessage foreground", remoteMessage.getData().toString());
             String title = remoteMessage.getNotification().getTitle();
             String body = remoteMessage.getNotification().getBody();
+
+
+            assert notificationType != null;
             if (title.equals("message")) {
                 resultIntent = new Intent(getApplicationContext(), ServicesChatAC.class);
                 resultIntent.putExtra(Constants.USER_ID, remoteMessage.getData().get("c_id"));
@@ -81,6 +94,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     resultIntent = new Intent(getApplicationContext(), AuthorityAC.class);
                 else
                     resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+            } else if (notificationType.equals(getApplicationContext().getString(R.string.label_opinion))) {
+
+                String postedById = null, postId = null;
+                try {
+                    postedById = json.get(getApplicationContext().getString(R.string.intent_posted_by_id)).toString();
+                    postId = json.get(getApplicationContext().getString(R.string.intent_post_id)).toString();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                resultIntent = new Intent(getApplicationContext(), CommentActivity.class);
+                resultIntent.putExtra(getApplicationContext().getString(R.string.post_id), postId);
+                resultIntent.putExtra(getApplicationContext().getString(R.string.intent_posted_by_id), postedById);
             }
 
             resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -134,6 +161,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     resultIntent = new Intent(getApplicationContext(), AuthorityAC.class);
                 else
                     resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+            } else if (notificationType.equals(getApplicationContext().getString(R.string.label_opinion))) {
+
+                String postedById = null, postId = null;
+                try {
+                    postedById = json.get(getApplicationContext().getString(R.string.intent_posted_by_id)).toString();
+                    postId = json.get(getApplicationContext().getString(R.string.intent_post_id)).toString();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                resultIntent = new Intent(getApplicationContext(), CommentActivity.class);
+                resultIntent.putExtra(getApplicationContext().getString(R.string.post_id), postId);
+                resultIntent.putExtra(getApplicationContext().getString(R.string.intent_posted_by_id), postedById);
             }
             resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
@@ -193,7 +234,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @SuppressLint("NewApi")
     private void sendNotification1(RemoteMessage remoteMessage) {
+        String notificationType = remoteMessage.getData().get(getApplicationContext().getString(R.string.intent_notification_type));
+        JSONObject json = null;
+        try {
+            json = new JSONObject(remoteMessage.getData().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         if (isAppIsInBackground(getApplicationContext())) {
+
             //foreground app
             Log.e("remoteMessage", remoteMessage.getData().toString());
             String title = remoteMessage.getNotification().getTitle();
@@ -210,6 +259,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     resultIntent = new Intent(getApplicationContext(), AuthorityAC.class);
                 else
                     resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+            } else if (notificationType.equals(getApplicationContext().getString(R.string.label_opinion))) {
+
+                String postedById = null, postId = null;
+                try {
+                    postedById = json.get(getApplicationContext().getString(R.string.intent_posted_by_id)).toString();
+                    postId = json.get(getApplicationContext().getString(R.string.intent_post_id)).toString();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                resultIntent = new Intent(getApplicationContext(), CommentActivity.class);
+                resultIntent.putExtra(getApplicationContext().getString(R.string.post_id), postId);
+                resultIntent.putExtra(getApplicationContext().getString(R.string.intent_posted_by_id), postedById);
             }
             resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
@@ -241,6 +304,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     resultIntent = new Intent(getApplicationContext(), AuthorityAC.class);
                 else
                     resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+            } else if (notificationType.equals(getApplicationContext().getString(R.string.label_opinion))) {
+
+                String postedById = null, postId = null;
+                try {
+                    postedById = json.get(getApplicationContext().getString(R.string.intent_posted_by_id)).toString();
+                    postId = json.get(getApplicationContext().getString(R.string.intent_post_id)).toString();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                resultIntent = new Intent(getApplicationContext(), CommentActivity.class);
+                resultIntent.putExtra(getApplicationContext().getString(R.string.post_id), postId);
+                resultIntent.putExtra(getApplicationContext().getString(R.string.intent_posted_by_id), postedById);
             }
             resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),

@@ -13,33 +13,45 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.codesses.lgucircle.Adapters.ReplyAdapter;
+import com.codesses.lgucircle.Enums.SharedPrefKey;
 import com.codesses.lgucircle.Interfaces.OnReplyClick;
 import com.codesses.lgucircle.R;
 
+import com.codesses.lgucircle.Singleton.VolleySingleton;
+import com.codesses.lgucircle.Utils.ApplicationUtils;
 import com.codesses.lgucircle.Utils.CurrentDateAndTime;
 import com.codesses.lgucircle.Utils.FirebaseRef;
+import com.codesses.lgucircle.Utils.SharedPrefManager;
 import com.codesses.lgucircle.databinding.ActivityCommentBinding;
 import com.codesses.lgucircle.databinding.CommentsItemLayoutBinding;
 import com.codesses.lgucircle.model.Comment;
 import com.codesses.lgucircle.model.OpinionReply;
+import com.codesses.lgucircle.model.User;
 import com.codesses.lgucircle.viewHolder.CommentViewHolder;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.shreyaspatil.firebase.recyclerpagination.DatabasePagingOptions;
 import com.shreyaspatil.firebase.recyclerpagination.FirebaseRecyclerPagingAdapter;
 import com.shreyaspatil.firebase.recyclerpagination.LoadingState;
 
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,13 +70,18 @@ public class CommentActivity extends AppCompatActivity {
     private String postId = "",
             opinion = "",
             reply = "",
-            selectedOpinionId = "";
+            selectedOpinionId = "",
+    opinionId = "";
 
     //    Firebase paging adapter
     private DatabaseReference postIdRef;
     RecyclerView recyclerView;
     Adapter mAdapter;
     List<Comment> commentList = new ArrayList<>();
+    User user;
+    String postedById;
+    private String fcmToken;
+    private String opinionById;
 
 
     @Override
@@ -76,7 +93,15 @@ public class CommentActivity extends AppCompatActivity {
 
 //        TODO: Getting intent & show full screen image
         postId = getIntent().getStringExtra(getString(R.string.post_id));
+        postedById = getIntent().getStringExtra(getString(R.string.intent_posted_by_id));
+        Gson gson = new Gson();
+
+        user = gson.fromJson(SharedPrefManager.getInstance(mContext).getSharedData(SharedPrefKey.USER), User.class);
+
         getOpinions();
+
+        //        Get posted by user
+        getPostedByUser();
 
         /****************
          * Click listener
@@ -194,7 +219,7 @@ public class CommentActivity extends AppCompatActivity {
 
     private void postOpinion(View view) {
         if (!TextUtils.isEmpty(opinion)) {
-            String opinionId = FirebaseRef.getCommentRef().push().getKey();
+            opinionId = FirebaseRef.getCommentRef().push().getKey();
 
             Map<String, Object> opinionMap = new HashMap<>();
             opinionMap.put("c_id", opinionId);
@@ -209,12 +234,163 @@ public class CommentActivity extends AppCompatActivity {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             binding.opinionBox.setText("");
+                            sendNotification();
                             getOpinionCount();
                         } else {
                             Toast.makeText(mContext, "Warning: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         }
+    }
+
+    private void sendNotification() {
+        String title = user.getFull_name();
+        String nId = FirebaseRef.getNotificationRef().push().getKey();
+
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("n_id", nId);
+        map.put("timestamp", System.currentTimeMillis());
+        map.put("type", 1);
+        map.put("post_id", postId);
+        map.put("title", title);
+        map.put("message",mContext.getString(R.string.label_leave_opinion_on_post));
+        map.put("o_id", opinionId);
+        map.put("sent_by", FirebaseRef.getUserId());
+        map.put("sent_to", postedById);
+        map.put("is_read", 0);
+
+        assert nId != null;
+        FirebaseRef.getNotificationRef().child(nId).updateChildren(map)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+
+                        try {
+                            sendPushNotification();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        Log.e(ApplicationUtils.ERROR_TAG, task.getException().getMessage());
+                        Toast.makeText(mContext, "Warning: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void getPostedByUser() {
+        FirebaseRef.getUserRef().child(postedById)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            User postedByUser = dataSnapshot.getValue(User.class);
+
+                            assert postedByUser != null;
+                            fcmToken = postedByUser.getFcmToken();
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError databaseError) {
+                        Log.e(ApplicationUtils.ERROR_TAG, databaseError.getMessage());
+                    }
+                });
+    }
+
+    private void sendPushNotification() throws JSONException {
+        JSONObject mainObject = new JSONObject();
+        JSONObject notificationObject = new JSONObject();
+        JSONObject dataObject = new JSONObject();
+
+
+//            Main body
+        mainObject.put("to", "/token/" + fcmToken);
+
+//            Notification body
+        notificationObject.put("title", user.getFull_name());
+        notificationObject.put("body", mContext.getString(R.string.label_leave_opinion_on_post));
+        notificationObject.put("click_action", "OPINION_ACTIVITY");
+
+//            Custom payload
+        dataObject.put(mContext.getString(R.string.intent_notification_type), mContext.getString(R.string.label_opinion));
+        dataObject.put(mContext.getString(R.string.intent_post_id), postId);
+        dataObject.put(mContext.getString(R.string.intent_posted_by_id), postedById);
+        dataObject.put(mContext.getString(R.string.intent_opinion_id), opinionId);
+
+        mainObject.put("notification", notificationObject);
+        mainObject.put("data", dataObject);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                ApplicationUtils.FCM_URL,
+                mainObject,
+                response -> {
+
+                    Log.d("FCM_RESPONSE", "sendPushNotification: " + response);
+                    Toast.makeText(mContext, "Posted", Toast.LENGTH_SHORT).show();
+
+                },
+                error -> Log.d("FCM_RESPONSE", "Error " + error)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("content-type", "application/json");
+                headers.put("authorization", "key=AAAABefXTZo:APA91bFhvO8QxjODhBLgZSyqgnzIRYTOl02b2coksyna5790lvige4VHhKhdjD88dArcjHjgBbAfMl2oKNBKxJqTjLTT4aOqJRy-XFH70vftrxlBUXJU-H6hHWLYeGyLJK1GeoMpJjwB");
+                return headers;
+            }
+        };
+
+        VolleySingleton.getInstance(mContext).addToRequestQueue(request);
+    }
+
+
+    private void sendReplyNotification() throws JSONException {
+        JSONObject mainObject = new JSONObject();
+        JSONObject notificationObject = new JSONObject();
+        JSONObject dataObject = new JSONObject();
+
+
+//            Main body
+        mainObject.put("to", "/token/" + fcmToken);
+
+//            Notification body
+        notificationObject.put("title", user.getFull_name());
+        notificationObject.put("body", mContext.getString(R.string.label_replied_to_opinion));
+        notificationObject.put("click_action", "REPLY_ACTIVITY");
+
+
+//            Custom payload
+        dataObject.put(mContext.getString(R.string.intent_notification_type), mContext.getString(R.string.label_reply));
+        dataObject.put(mContext.getString(R.string.intent_post_id), postId);
+        dataObject.put(mContext.getString(R.string.intent_opinion_id), opinionId);
+        dataObject.put(mContext.getString(R.string.intent_opinioned_by_id), opinionById);
+
+        mainObject.put("notification", notificationObject);
+        mainObject.put("data", dataObject);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                ApplicationUtils.FCM_URL,
+                mainObject,
+                response -> {
+
+                    Log.d("FCM_RESPONSE", "sendPushNotification: " + response);
+                    Toast.makeText(mContext, "Posted", Toast.LENGTH_SHORT).show();
+
+                },
+                error -> Log.d("FCM_RESPONSE", "Error " + error)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("content-type", "application/json");
+                headers.put("authorization", "key=AAAABefXTZo:APA91bFhvO8QxjODhBLgZSyqgnzIRYTOl02b2coksyna5790lvige4VHhKhdjD88dArcjHjgBbAfMl2oKNBKxJqTjLTT4aOqJRy-XFH70vftrxlBUXJU-H6hHWLYeGyLJK1GeoMpJjwB");
+                return headers;
+            }
+        };
+
+        VolleySingleton.getInstance(mContext).addToRequestQueue(request);
     }
 
     private void getOpinionCount() {
@@ -254,28 +430,65 @@ public class CommentActivity extends AppCompatActivity {
 
     private void postReply(View view) {
         if (!TextUtils.isEmpty(reply)) {
-            String replyId = FirebaseRef.getCommentRef().push().getKey();
+            opinionById = FirebaseRef.getCommentRef().push().getKey();
 
             Map<String, Object> replyMap = new HashMap<>();
-            replyMap.put("r_id", replyId);
+            replyMap.put("r_id", opinionById);
             replyMap.put("replied_by", FirebaseRef.getUserId());
             replyMap.put("reply", reply);
             replyMap.put("date", CurrentDateAndTime.currentDate());
             replyMap.put("time", CurrentDateAndTime.currentTime());
 
             FirebaseRef.getCommentRef().child(postId).child(selectedOpinionId)
-                    .child(getString(R.string.reply_lowercase)).child(replyId)
+                    .child(getString(R.string.reply_lowercase)).child(opinionById)
                     .updateChildren(replyMap)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             binding.replyBox.setText("");
-                            Toast.makeText(mContext, "Reply: " + replyId, Toast.LENGTH_SHORT).show();
+                            sendNotificationForReply();
+                            Toast.makeText(mContext, "Reply: " + opinionById, Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(mContext, "Warning: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
 
         }
+    }
+
+    private void sendNotificationForReply() {
+        String title = user.getFull_name();
+        String message = mContext.getString(R.string.label_replied_to_opinion);
+
+        String nId = FirebaseRef.getNotificationRef().push().getKey();
+
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("n_id", nId);
+        map.put("timestamp", System.currentTimeMillis());
+        map.put("type", 1);
+        map.put("post_id", postId);
+        map.put("title", title);
+        map.put("message", message);
+        map.put("o_id", opinionId);
+        map.put("sent_by", FirebaseRef.getUserId());
+        map.put("sent_to", opinionById);
+        map.put("is_read", 0);
+
+        assert nId != null;
+        FirebaseRef.getNotificationRef().child(nId).updateChildren(map)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        binding.replyBox.setText("");
+                        try {
+                            sendReplyNotification();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.e(ApplicationUtils.ERROR_TAG, task.getException().getMessage());
+                        Toast.makeText(mContext, "Warning: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void setAdapter() {

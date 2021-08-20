@@ -62,8 +62,17 @@
 
     <style name="HeadingText">heading Text</style>
 
-    <string name="reply_lowercase">Reply in Lowercase</string>
+    <string name="reply_lowercase">reply</string>
     <string name="post_id">Post Id</string>
+    <string name="intent_posted_by_id">posted_by_id</string>
+    <string name="intent_opinion_id">opinion_id</string>
+    <string name="intent_opinioned_by_id">opinioned_by_id</string>
+    <string name="label_opinion">opinion</string>
+    <string name="intent_notification_type">noti_type</string>
+    <string name="label_replied_to_opinion">replied to your opinion</string>
+    <string name="label_reply">reply</string>
+    <string name="intent_post_id">post_id</string>
+    <string name="label_leave_opinion_on_post">left an opinion on your post</string>
     <string name="today">Today</string>
     <string name="search">Search</string>
     <string name="bottom_menu">Bottom Sheet</string>

@@ -26,6 +26,7 @@ import com.google.firebase.auth.EmailAuthProvider;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ChangePassDialog extends DialogFragment {
 
@@ -149,11 +150,11 @@ public class ChangePassDialog extends DialogFragment {
 
                     if (task.isSuccessful()) {
 
-                        Toast.makeText(getActivity(), getString(R.string.pass_updated), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(fragmentActivity, fragmentActivity.getString(R.string.pass_updated), Toast.LENGTH_SHORT).show();
 
                     } else {
 
-                        Toast.makeText(getActivity(), "Alert! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(fragmentActivity, "Alert! " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -164,12 +165,12 @@ public class ChangePassDialog extends DialogFragment {
     private void oldPassVisibility(View view) {
         if (isOldPassVisible) {
             isOldPassVisible = false;
-            binding.oldPassHide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+            binding.oldPassHide.setColorFilter(ContextCompat.getColor(fragmentActivity, R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
             binding.oldPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         } else {
             isOldPassVisible = true;
-            binding.oldPassHide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
+            binding.oldPassHide.setColorFilter(ContextCompat.getColor(fragmentActivity, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
             binding.oldPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         }
     }
@@ -177,13 +178,13 @@ public class ChangePassDialog extends DialogFragment {
     private void newPassVisibility(View view) {
         if (isNewPassVisible) {
             isNewPassVisible = false;
-            binding.newPassHide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
+            binding.newPassHide.setColorFilter(ContextCompat.getColor(fragmentActivity, R.color.red), android.graphics.PorterDuff.Mode.SRC_IN);
             binding.newPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         } else {
 
             isNewPassVisible = true;
-            binding.newPassHide.setColorFilter(ContextCompat.getColor(getActivity(), R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
+            binding.newPassHide.setColorFilter(ContextCompat.getColor(fragmentActivity, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
             binding.newPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         }
     }

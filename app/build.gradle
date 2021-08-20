@@ -35,34 +35,34 @@ android {
 
 dependencies {
 
-    implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.firebase:firebase-auth:21.0.1'
-    implementation 'com.google.firebase:firebase-database:20.0.0'
+    implementation 'com.google.firebase:firebase-database:20.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.firebase:firebase-storage:20.0.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
-    implementation 'androidx.paging:paging-runtime:3.0.0'
     implementation files('libs/mail.jar')
     implementation files('libs/additionnal.jar')
     implementation files('libs/activation.jar')
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
     implementation 'androidx.navigation:navigation-ui:2.3.5'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
 
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
-
     implementation 'com.intuit.ssp:ssp-android:1.0.6'
+
     implementation 'com.jakewharton:butterknife:10.2.3'
     //Round corner image view
     implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
     //CIRCULAR IMAGEVIEW
-    implementation 'com.mikhaellopez:circularimageview:4.2.0'
+    implementation 'com.mikhaellopez:circularimageview:4.3.0'
     // CardView
     implementation "androidx.cardview:cardview:1.0.0"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -76,6 +76,7 @@ dependencies {
 
     def paging_version = "3.0.0"
 
+    //noinspection GradleDependency
     implementation "androidx.paging:paging-runtime:$paging_version"
 
     //Firebase Pagination Library
@@ -84,7 +85,7 @@ dependencies {
     //Firebase-UI Library
     implementation 'com.firebaseui:firebase-ui-database:4.3.1'
     //COUNTRY CODE PICKER
-    implementation 'com.hbb20:ccp:2.4.4'
+    implementation 'com.hbb20:ccp:2.5.1'
     //    TODO: See More
     implementation 'com.borjabravo:readmoretextview:2.1.0'
 
